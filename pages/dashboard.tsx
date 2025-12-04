@@ -5,10 +5,10 @@ import { supabase } from "../utils/supabase";
 import { useRouter } from "next/router";
 
 type Engagement = {
-  id: string;
+  sessionId: string;
   scoring: number;
   engagement: string;
-  created_at: string;
+  sessionContext: string;
 };
 
 type User = {
@@ -36,8 +36,8 @@ export default function Dashboard() {
       setLoading(true);
       const { data, error } = await supabase
         .from("Engagement")
-        .select("id, scoring, engagement, created_at")
-        .eq("user_id", parsed.id)
+        .select("sessionId, scoring, engagement, sessionContext")
+        .eq("userId", parsed.id)
         .order("created_at", { ascending: false });
 
       if (error) {
