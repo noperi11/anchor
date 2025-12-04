@@ -1,55 +1,131 @@
+// pages/api/products.ts
+
 import type { NextApiRequest, NextApiResponse } from "next";
-import { supabaseServer } from "../../lib/supabaseServer";
+// Asumsi ini adalah client Supabase yang dikonfigurasi untuk Sisi Server
+import { supabaseServer } from "../../lib/supabaseServer"; 
+
+// Asumsi: supabaseServer memiliki helper untuk mengambil sesi dari req/res.
+// Contoh helper:
+/* async function getCurrentUser(req, res) {
+    // Misalnya, menggunakan supabase.auth.api.getUser atau helper dari Next.js Supabase
+    // Mengambil user dari JWT di cookies/header
+    const { data: { user } } = await supabaseServer.auth.getUser({ req, res });
+    return user;
+}
+*/
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const method = req.method;
+    const method = req.method;
 
-  // GET PRODUCTS
-  if (method === "GET") {
-    const seller_name = req.query.seller_name as string | undefined;
+    // --- LOGIKA UTAMA OTORISASI ---
+    const user = await getCurrentUser(req, res); // Dapatkan user object
+    const userId = user?.id;
+    
+    // Logika Otorisasi diperlukan untuk POST, PUT, PATCH, DELETE
 
-    let query = supabaseServer.from("products").select("*");
-    if (seller_name) query = query.eq("seller_name", seller_name);
+    // ===================================
+    // GET PRODUCTS (Tidak perlu otorisasi ketat, tapi bisa difilter)
+    // ===================================
+    if (method === "GET") {
+        const brand_id = req.query.brand_id as string | undefined;
 
-    const { data, error } = await query.order("created_at", { ascending: false });
-    if (error) return res.status(500).json({ error: error.message });
+        let query = supabaseServer.from("products").select("*");
+        if (brand_id) query = query.eq("brand_id", brand_id); 
+        
+        // PENTING: Untuk menampilkan hanya produk yang boleh dilihat user tertentu,
+        // Anda harus JOIN dengan brand_members dan filter berdasarkan userId,
+        // tetapi untuk GET sederhana, kita biarkan saja (akses publik/sesuai RLS).
 
-    return res.status(200).json({ products: data });
-  }
+        const { data, error } = await query.order("created_at", { ascending: false });
+        if (error) return res.status(500).json({ error: error.message });
 
-  // CREATE PRODUCT
-  if (method === "POST") {
-    const { name, price, url, category, seller_name } = req.body;
-
-    if (!name || !price || !url || !category || !seller_name) {
-      return res.status(400).json({ error: "Missing fields" });
+        return res.status(200).json({ products: data });
     }
 
-    const { data, error } = await supabaseServer.from("products").insert([
-      { name, price, url, category, seller_name }
-    ]);
+    // ===================================
+    // CREATE PRODUCT (Wajib Otorisasi)
+    // ===================================
+    if (method === "POST") {
+        const { name, price, url, category, brand_id } = req.body; 
 
-    if (error) return res.status(500).json({ error: error.message });
+        if (!name || !price || !url || !category || !brand_id) {
+            return res.status(400).json({ error: "Missing required fields." });
+        }
 
-    return res.status(201).json({ product: data?.[0] });
-  }
+        // --- 1. OTENTIKASI ---
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized: User not logged in." });
+        }
 
-  // UPDATE PRODUCT
-  if (method === "PUT" || method === "PATCH") {
-    const { id, ...update } = req.body;
+        // --- 2. OTORISASI: Cek izin di brand_members ---
+        const { count, error: memberError } = await supabaseServer
+            .from('brand_members')
+            .select('user_id', { count: 'exact' })
+            .eq('user_id', userId)
+            .eq('brand_id', brand_id); // Cek Brand ID yang dikirim user
 
-    if (!id) return res.status(400).json({ error: "Missing id" });
+        if (memberError) {
+            console.error("Member Check Error:", memberError);
+            return res.status(500).json({ error: "Authorization check failed." });
+        }
+        
+        if (count === 0) {
+            // User tidak ada di daftar pengelola Brand ini
+            return res.status(403).json({ error: "Forbidden: Not authorized to manage this brand." });
+        }
 
-    const { data, error } = await supabaseServer
-      .from("products")
-      .update(update)
-      .eq("id", id);
+        // --- 3. AKSI: Insert yang Aman ---
+        const { data, error } = await supabaseServer.from("products").insert([
+            { name, price, url, category, brand_id }
+        ]).select();
 
-    if (error) return res.status(500).json({ error: error.message });
+        if (error) return res.status(500).json({ error: error.message });
 
-    return res.status(200).json({ product: data?.[0] });
-  }
+        return res.status(201).json({ product: data?.[0] });
+    }
 
-  // METHOD NOT ALLOWED
-  return res.status(405).json({ error: "Method not allowed" });
+    // ===================================
+    // UPDATE PRODUCT (Wajib Otorisasi)
+    // ===================================
+    if (method === "PUT" || method === "PATCH") {
+        const { id, ...update } = req.body;
+
+        if (!id) return res.status(400).json({ error: "Missing product id" });
+
+        // --- 1. OTENTIKASI ---
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized: User not logged in." });
+        }
+
+        // --- 2. OTORISASI: Cek Kepemilikan Brand dari Produk yang akan diubah ---
+        
+        // a. Cari tahu brand_id dari produk ini (perlu JOIN dengan brand_members)
+        const { data: authorizedProduct, error: authError } = await supabaseServer
+            .from("products")
+            .select("brand_id, brand_members!inner(user_id)") // JOIN dengan brand_members
+            .eq("id", id)
+            .eq("brand_members.user_id", userId) // Filter hanya produk yang brandnya dikelola user
+            .single();
+        
+        if (authError || !authorizedProduct) {
+            // Jika error atau tidak ada data (tidak ditemukan atau user tidak berhak)
+            return res.status(403).json({ error: "Forbidden: Product not found or not authorized to update." });
+        }
+
+        // --- 3. AKSI: Update yang Aman ---
+        const { data, error } = await supabaseServer
+            .from("products")
+            .update(update)
+            .eq("id", id)
+            .select();
+
+        if (error) return res.status(500).json({ error: error.message });
+
+        return res.status(200).json({ product: data?.[0] });
+    }
+
+    // ===================================
+    // METHOD NOT ALLOWED
+    // ===================================
+    return res.status(405).json({ error: "Method not allowed" });
 }
