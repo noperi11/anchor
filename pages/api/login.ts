@@ -17,8 +17,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { data: user, error } = await supabase
     .from("Users")
     .select("*")
-    .eq("email", email)
-    .eq("password", password)
+    .eq("Id", email)
+    .eq("Password", password)
     .single();
 
   if (error || !user) {
