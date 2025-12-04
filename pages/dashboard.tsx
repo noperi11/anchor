@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 
 type Engagement = {
   sessionId: string;
+  userId: string;
   scoring: number;
   engagement: string;
   sessionContext: string;
@@ -31,14 +32,12 @@ export default function Dashboard() {
     const parsed: User = JSON.parse(stored);
     setUser(parsed);
 
-    // Fetch Engagement data for this user
     async function fetchEngagement() {
       setLoading(true);
       const { data, error } = await supabase
         .from("Engagement")
-        .select("sessionId, scoring, engagement, sessionContext")
-        .eq("userId", parsed.id)
-        .order("created_at", { ascending: false });
+        .select("sessionId, userId, scoring, engagement, sessionContext")
+        .eq("userId", parsed.id);
 
       if (error) {
         console.error("Error fetching engagement:", error);
@@ -67,10 +66,10 @@ export default function Dashboard() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {engagements.map((e) => (
-            <div key={e.id} className="p-4 bg-gray-900 rounded-xl shadow hover:shadow-lg transition">
-              <p className="text-sm text-gray-400">{new Date(e.created_at).toLocaleDateString()}</p>
+            <div key={e.userId} className="p-4 bg-gray-900 rounded-xl shadow hover:shadow-lg transition">
               <h3 className="text-lg font-bold mt-2">Score: {e.scoring}</h3>
               <p className="mt-1 text-gray-300">{e.engagement}</p>
+              <p className="mt-2 text-sm text-gray-400">Context: {e.sessionContext}</p>
             </div>
           ))}
         </div>
