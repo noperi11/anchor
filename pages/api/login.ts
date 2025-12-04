@@ -13,12 +13,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "Email & password required" });
   }
 
-  // ambil user dari supabase
   const { data: user, error } = await supabase
     .from("Users")
     .select("*")
-    .eq("Id", email)
-    .eq("Password", password)
+    .eq("email", email)      // ← FIX
+    .eq("password", password) // ← FIX
     .single();
 
   if (error || !user) {
