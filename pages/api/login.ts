@@ -8,26 +8,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const { email, password } = req.body;
-
   if (!email || !password) {
     return res.status(400).json({ error: "Email & password required" });
   }
 
-  const { data: user, error } = await supabase
-    .from("Users")
-    .select("*")
-    .eq("email", email)      // ← FIX
-    .eq("password", password) // ← FIX
-    .single();
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
 
-  if (error || !user) {
+  if (error || !data.user) {
     return res.status(401).json({ error: "Email atau password salah" });
   }
 
+  // login sukses → kirim data user
   return res.status(200).json({
     user: {
-      id: user.id,
-      email: user.email,
+      id: data.user.id,
+      email: data.user.email,
+      // bisa include field lain sesuai kebutuhan
     },
+    session: data.session 
   });
 }
