@@ -35,7 +35,7 @@ export default function Dashboard() {
       setLoading(true);
       const { data, error } = await supabase
         .from("Engagement")
-        .select("userId, scoring, engagement, sessionContext")
+        .select("userId, Scoring, Engagement, sessionContext")
         .eq("userId", parsed.id);
 
       if (error) {
