@@ -28,6 +28,7 @@ export default function Dashboard() {
       router.push("/login");
       return;
     }
+
     const parsed: User = JSON.parse(stored);
     setUser(parsed);
 
@@ -44,7 +45,15 @@ export default function Dashboard() {
         return;
       }
 
-      setEngagements(data || []);
+      // Mapping ke camelCase untuk front-end
+      const formattedData: Engagement[] = (data || []).map((e: any) => ({
+        userId: e.userId,
+        scoring: e.Scoring,
+        engagement: e.Engagement,
+        sessionContext: e.sessionContext,
+      }));
+
+      setEngagements(formattedData);
       setLoading(false);
     }
 
@@ -66,7 +75,7 @@ export default function Dashboard() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {engagements.map((e, idx) => (
             <div
-              key={`${e.userId}-${idx}`} // kombinasi userId + index untuk key unik
+              key={`${e.userId}-${idx}`} // key aman walau session berubah
               className="p-4 bg-gray-900 rounded-xl shadow hover:shadow-lg transition"
             >
               <h3 className="text-lg font-bold mt-2">Score: {e.scoring}</h3>
