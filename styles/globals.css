@@ -2,7 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Optional tambahan style global */
-body {
-  @apply bg-dark text-light;
+/* optional: custom focus and scrollbar */
+:root{
+  --bg:#0b0b0b;
+  --card:#0f0f0f;
+  --muted:#9ca3af;
 }
+
+body {
+  @apply bg-dark text-light antialiased;
+  background-color: var(--bg);
+}
+
+input, textarea {
+  caret-color: #60a5fa;
+}
+
+::-webkit-scrollbar { width: 8px; height:8px; }
+::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 9999px; }
