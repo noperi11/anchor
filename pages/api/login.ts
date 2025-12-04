@@ -1,26 +1,34 @@
+// pages/api/login.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import { supabaseServer } from "../../lib/supabaseServer";
+import { supabase } from "../../utils/supabase";
 
-
-// POST { email, password }
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-if (req.method !== "POST") return res.status(405).end();
-const { email, password } = req.body;
-if (!email || !password) return res.status(400).json({ error: "Missing credentials" });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed, use POST" });
+  }
 
+  const { email, password } = req.body;
 
-const { data, error } = await supabaseServer
-.from("users")
-.select("id, name, email")
-.eq("email", email)
-.eq("password", password)
-.limit(1)
-.single();
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email & password required" });
+  }
 
+  // ambil user dari supabase
+  const { data: user, error } = await supabase
+    .from("Users")
+    .select("*")
+    .eq("email", email)
+    .eq("password", password)
+    .single();
 
-if (error || !data) return res.status(401).json({ error: "Invalid credentials" });
+  if (error || !user) {
+    return res.status(401).json({ error: "Email atau password salah" });
+  }
 
-
-// simple prototype: return user object; client simpan sesi minimal di localStorage
-return res.status(200).json({ user: data });
+  return res.status(200).json({
+    user: {
+      id: user.id,
+      email: user.email,
+    },
+  });
 }
