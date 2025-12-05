@@ -1,18 +1,14 @@
-// pages/api/products.ts
-
 import type { NextApiRequest, NextApiResponse } from "next";
-// Asumsi ini adalah client Supabase yang dikonfigurasi untuk Sisi Server
-import { supabaseServer } from "../../lib/supabaseServer"; 
+import { supabaseServer } from "../../lib/supabaseServer";
 
-// Asumsi: supabaseServer memiliki helper untuk mengambil sesi dari req/res.
-// Contoh helper:
-/* async function getCurrentUser(req, res) {
-    // Misalnya, menggunakan supabase.auth.api.getUser atau helper dari Next.js Supabase
-    // Mengambil user dari JWT di cookies/header
-    const { data: { user } } = await supabaseServer.auth.getUser({ req, res });
-    return user;
+// FIX: definisikan getCurrentUser
+async function getCurrentUser(req: NextApiRequest, res: NextApiResponse) {
+  const { data, error } = await supabaseServer.auth.getUser();
+
+  if (error) return null;
+  return data.user;   // user.id digunakan untuk brand_members
 }
-*/
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const method = req.method;
