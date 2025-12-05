@@ -1,52 +1,43 @@
 type Props = {
-  name: string;
-  price: number;
-  link: string;
+  productName: string;
+  productLink: string;
   category: string;
+  brandName: string;
 
-  setName: (v: string) => void;
-  setPrice: (v: number) => void;
-  setLink: (v: string) => void;
+  setProductName: (v: string) => void;
+  setProductLink: (v: string) => void;
   setCategory: (v: string) => void;
+  setBrandName: (v: string) => void;
 
   onSubmit: (e: any) => void;
   submitText: string;
 };
 
 export default function ProductForm({
-  name,
-  price,
-  link,
+  productName,
+  productLink,
   category,
-  setName,
-  setPrice,
-  setLink,
+  brandName,
+  setProductName,
+  setProductLink,
   setCategory,
+  setBrandName,
   onSubmit,
   submitText,
 }: Props) {
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
-      
       <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        value={productName}
+        onChange={(e) => setProductName(e.target.value)}
         placeholder="Product Name"
         className="border px-3 py-2 rounded"
       />
 
       <input
-        value={price}
-        type="number"
-        onChange={(e) => setPrice(Number(e.target.value))}
-        placeholder="Price"
-        className="border px-3 py-2 rounded"
-      />
-
-      <input
-        value={link}
-        onChange={(e) => setLink(e.target.value)}
-        placeholder="Product Link"
+        value={brandName}
+        onChange={(e) => setBrandName(e.target.value)}
+        placeholder="Brand Name"
         className="border px-3 py-2 rounded"
       />
 
@@ -57,10 +48,16 @@ export default function ProductForm({
         className="border px-3 py-2 rounded"
       />
 
-      <button className="bg-blue-500 text-white px-4 py-2 rounded">
+      <input
+        value={productLink}
+        onChange={(e) => setProductLink(e.target.value)}
+        placeholder="Product Link"
+        className="border px-3 py-2 rounded"
+      />
+
+      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
         {submitText}
       </button>
-
     </form>
   );
 }
