@@ -1,59 +1,60 @@
 type Props = {
-  productName: string;
+  name: string;
+  price: number;
+  link: string;
   category: string;
-  productLink: string;
-  brandName: string;
 
-  setProductName: (v: string) => void;
+  setName: (v: string) => void;
+  setPrice: (v: number) => void;
+  setLink: (v: string) => void;
   setCategory: (v: string) => void;
-  setProductLink: (v: string) => void;
-  setBrandName: (v: string) => void;
 
   onSubmit: (e: any) => void;
   submitText: string;
 };
 
 export default function ProductForm({
-  productName,
+  name,
+  price,
+  link,
   category,
-  productLink,
-  brandName,
-  setProductName,
+  setName,
+  setPrice,
+  setLink,
   setCategory,
-  setProductLink,
-  setBrandName,
   onSubmit,
   submitText,
 }: Props) {
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
-
-      <input 
-        value={productName}
-        onChange={(e) => setProductName(e.target.value)}
-        className="border px-3 py-2 rounded"
+      
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
         placeholder="Product Name"
-      />
-
-      <input 
-        value={brandName}
-        onChange={(e) => setBrandName(e.target.value)}
         className="border px-3 py-2 rounded"
-        placeholder="Brand Name"
       />
 
-      <input 
+      <input
+        value={price}
+        type="number"
+        onChange={(e) => setPrice(Number(e.target.value))}
+        placeholder="Price"
+        className="border px-3 py-2 rounded"
+      />
+
+      <input
+        value={link}
+        onChange={(e) => setLink(e.target.value)}
+        placeholder="Product Link"
+        className="border px-3 py-2 rounded"
+      />
+
+      <input
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        className="border px-3 py-2 rounded"
         placeholder="Category"
-      />
-
-      <input 
-        value={productLink}
-        onChange={(e) => setProductLink(e.target.value)}
         className="border px-3 py-2 rounded"
-        placeholder="Product Link"
       />
 
       <button className="bg-blue-500 text-white px-4 py-2 rounded">
