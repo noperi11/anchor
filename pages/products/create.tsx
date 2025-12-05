@@ -11,7 +11,13 @@ export default function CreateProduct() {
   const [brandName, setBrandName] = useState("");
 
   // UserId ambil dari localStorage setelah login
-  const userId = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+const userData =
+  typeof window !== "undefined"
+    ? localStorage.getItem("app_user")
+    : null;
+
+const userId = userData ? JSON.parse(userData).id : null;
+
 
   async function submit(e: any) {
     e.preventDefault();
