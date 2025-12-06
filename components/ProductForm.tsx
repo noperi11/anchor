@@ -12,7 +12,6 @@ type Props = {
   setCategory: (v: string) => void;
   setBrandName: (v: string) => void;
 
-  // Ubah tipe event dari 'any' menjadi FormEvent<HTMLFormElement> untuk tipe yang lebih baik
   onSubmit: (e: FormEvent<HTMLFormElement>) => void; 
   submitText: string;
 };
@@ -29,70 +28,67 @@ export default function ProductForm({
   onSubmit,
   submitText,
 }: Props) {
+  
+  // ** Definisi Custom Class untuk Neon Button **
+  // Karena Tailwind tidak mendukung efek glow kompleks di class tunggal, 
+  // kita definisikan styling button secara eksternal (di bawah komponen, atau bisa di globals.css)
+  const neonButtonClass = `
+    transition-all duration-300 ease-in-out
+    shadow-lg 
+    hover:shadow-[0_0_15px_var(--color-accent-darker),_0_0_25px_var(--color-accent-darker)]
+    hover:scale-[1.02]
+  `;
+
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
+      
       {/* ---------------------------------------------------- */}
-      {/* INPUT FIELD STYLING (Menggunakan --color-bg-raised) */}
+      {/* INPUT FIELD STYLING (Sudah diatur di globals.css) */}
       {/* ---------------------------------------------------- */}
       
-      {/* Input Field 1: Product Name */}
+      {/* Input Fields: Hapus styling inline karena sudah dihandle oleh globals.css */}
       <input
         value={productName}
         onChange={(e) => setProductName(e.target.value)}
         placeholder="Product Name"
-        style={{
-          backgroundColor: 'var(--color-bg-raised)',
-          borderColor: 'var(--color-border-subtle)',
-        }}
-        className="border px-3 py-2 rounded"
+        // Hapus style inline. Cukup gunakan class untuk bentuk dan padding.
+        // Styling warna dan fokus (glow) sudah di globals.css.
+        className="px-3 py-2 rounded" 
       />
 
-      {/* Input Field 2: Brand Name */}
       <input
         value={brandName}
         onChange={(e) => setBrandName(e.target.value)}
         placeholder="Brand Name"
-        style={{
-          backgroundColor: 'var(--color-bg-raised)',
-          borderColor: 'var(--color-border-subtle)',
-        }}
-        className="border px-3 py-2 rounded"
+        className="px-3 py-2 rounded"
       />
 
-      {/* Input Field 3: Category */}
       <input
         value={category}
         onChange={(e) => setCategory(e.target.value)}
         placeholder="Category"
-        style={{
-          backgroundColor: 'var(--color-bg-raised)',
-          borderColor: 'var(--color-border-subtle)',
-        }}
-        className="border px-3 py-2 rounded"
+        className="px-3 py-2 rounded"
       />
 
-      {/* Input Field 4: Product Link */}
       <input
         value={productLink}
         onChange={(e) => setProductLink(e.target.value)}
         placeholder="Product Link"
-        style={{
-          backgroundColor: 'var(--color-bg-raised)',
-          borderColor: 'var(--color-border-subtle)',
-        }}
-        className="border px-3 py-2 rounded"
+        className="px-3 py-2 rounded"
       />
 
       {/* ---------------------------------------------------- */}
-      {/* SUBMIT BUTTON STYLING (Menggunakan --color-accent) */}
+      {/* SUBMIT BUTTON: NEON GLOW EFFECT */}
       {/* ---------------------------------------------------- */}
       <button 
         type="submit" 
         style={{ 
+          // Warna latar belakang dan teks dipertahankan
           backgroundColor: 'var(--color-accent)', 
-          color: 'var(--color-text-primary)' // Menggunakan warna teks utama/putih pucat
+          color: 'var(--color-bg-primary)', // Gunakan warna gelap untuk teks agar kontras
         }}
-        className="px-4 py-2 rounded font-semibold hover:opacity-90 transition"
+        // Gabungkan kelas Tailwind dasar dengan kelas Neon Button
+        className={`px-4 py-2 rounded font-bold ${neonButtonClass}`}
       >
         {submitText}
       </button>
