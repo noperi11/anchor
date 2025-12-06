@@ -19,7 +19,7 @@ export default function Layout({ children, showHeader = true }: Props) {
           {/* Tambahkan class glass-effect di sini */}
           <div className="glass-effect absolute inset-0 -z-10"></div>
           
-          <nav className="max-w-5xl mx-auto flex items-center justify-between relative z-10">
+          <nav className="max-w-2xl mx-auto flex items-center justify-between relative z-10">
             <div className="flex items-center gap-8">
               {/* BRANDING/LOGO - Gunakan warna aksen Neon */}
               <h1 
