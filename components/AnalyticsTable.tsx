@@ -1,7 +1,6 @@
 export default function AnalyticsTable({ data }: any) {
   return (
     <div 
-      // Mengganti warna hardcoded dengan variabel CSS untuk Dark Mode
       style={{
         backgroundColor: 'var(--color-bg-surface)', 
         borderColor: 'var(--color-border-subtle)',
@@ -12,12 +11,13 @@ export default function AnalyticsTable({ data }: any) {
 
       <table className="w-full text-left">
         <thead>
+          {/* BARIS YANG DIPERBAIKI: Menggabungkan semua styling ke dalam satu atribut style */}
           <tr 
-            // Menggunakan warna teks sekunder untuk header kolom
-            style={{ color: 'var(--color-text-secondary)' }}
-            // Menggunakan subtle border untuk pemisah header
             className="border-b"
-            style={{ borderBottomColor: 'var(--color-border-subtle)' }}
+            style={{ 
+              color: 'var(--color-text-secondary)', // Warna teks sekunder
+              borderBottomColor: 'var(--color-border-subtle)', // Border bawah yang lembut
+            }}
           >
             <th className="py-2">Metric</th>
             <th className="py-2">Value</th>
@@ -30,7 +30,7 @@ export default function AnalyticsTable({ data }: any) {
               key={row.id} 
               // Menggunakan subtle border yang sedikit lebih gelap (atau sama) untuk pemisah baris
               className="border-b"
-              style={{ borderBottomColor: 'var(--color-border-subtle)' }}
+              style={{ borderBottomColor: 'var(--color-border-subtle)' }} // Hanya satu style di sini
             >
               <td className="py-2">{row.metric_name}</td>
               <td className="py-2">{row.metric_value}</td>
