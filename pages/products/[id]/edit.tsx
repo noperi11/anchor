@@ -2,12 +2,17 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Layout from "@/components/Layout";
 import ProductForm from "@/components/ProductForm";
-// Hapus import { createClient } dari "@supabase/supabase-js" jika tidak lagi digunakan
 import { createClient } from "@supabase/supabase-js"; 
 
+// -----------------------------------------------------------------
+// SUPABASE CLIENT DI FRONTEND (Hanya untuk operasi SELECT) 
+// -----------------------------------------------------------------
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+// -----------------------------------------------------------------
 
-// Klien Supabase hanya digunakan untuk operasi READ (SELECT) di load()
-// Hapus jika Anda ingin memindahkan SEMUA logika Supabase ke backend
 
 export default function EditProduct() {
     const router = useRouter();
@@ -20,10 +25,11 @@ export default function EditProduct() {
     const [category, setCategory] = useState("");
     const [brandName, setBrandName] = useState("");
 
+    // Fungsi load() menggunakan Supabase Client di Frontend
     async function load() {
         if (!id) return;
         
-        // Operasi READ (SELECT) tetap di frontend
+        // Operasi READ (SELECT) menggunakan klien Supabase anon
         const { data, error } = await supabase
             .from("products")
             .select("*")
@@ -39,7 +45,6 @@ export default function EditProduct() {
         setProduct(data);
 
         if (data) {
-            // Sesuaikan dengan kolom DB
             setProductName(data.ProductName ?? "");
             setProductLink(data.ProductLink ?? "");
             setCategory(data.Category ?? "");
@@ -52,7 +57,7 @@ export default function EditProduct() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
-    // Fungsi Submit direvisi untuk memanggil API Route (UPDATE)
+    // Fungsi submit() tetap memanggil API Route /api/edit-product (Backend)
     async function submit(e: any) {
         e.preventDefault();
 
@@ -62,7 +67,7 @@ export default function EditProduct() {
         }
 
         const payload = {
-            ProductId: id, // Kirim ID produk yang akan diupdate
+            ProductId: id,
             ProductName: productName,
             ProductLink: productLink,
             Category: category,
@@ -81,7 +86,6 @@ export default function EditProduct() {
                 throw new Error(errorData.error || "Update failed due to server error.");
             }
 
-            // Jika berhasil
             router.push("/products");
 
         } catch (error: any) {
@@ -90,7 +94,6 @@ export default function EditProduct() {
         }
     }
 
-    // show loading while fetching
     if (!product && id) return <Layout>Loading...</Layout>;
 
     return (
