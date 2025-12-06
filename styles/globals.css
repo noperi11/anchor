@@ -3,48 +3,32 @@
 @tailwind utilities;
 
 /* ---------------------------------------------------- */
-/* 1. DEFINISI VARIABEL WARNA (DARK MODE SEBAGAI DEFAULT) */
+/* 1. DEFINISI VARIABEL WARNA (KILLER DARK MODE) */
 /* ---------------------------------------------------- */
 
 :root {
   /* ======================================= */
-  /* DARK MODE VARIABLES (Default for your current setup) */
+  /* KILLER DARK MODE VARIABLES (Default) */
   /* ======================================= */
-  --color-bg-primary: #121212; /* Latar Belakang Paling Gelap */
-  --color-bg-surface: #1e1e1e; /* Untuk Sidebar, Header, Card */
-  --color-bg-raised: #2a2a2a; /* Untuk Input fields/Modal (tampak lebih terang) */
+  --color-bg-primary: #0A0A0A; /* Latar Belakang PALING GELAP, Lebih dalam dari #121212 */
+  --color-bg-surface: #1C1C1C; /* Untuk Sidebar, Header, Card (Sangat gelap) */
+  --color-bg-raised: #282828; /* Untuk Input fields/Modal */
 
-  --color-text-primary: #e0e0e0; /* Teks Utama (Putih Pucat) */
-  --color-text-secondary: #b0b0b0; /* Teks Sekunder/Muted */
-  --color-text-muted: #9ca3af; /* (Sama seperti --muted Anda) */
+  --color-text-primary: #FAFAFA; /* Teks Utama (Hampir Putih) */
+  --color-text-secondary: #B0B0B0; /* Teks Sekunder/Muted */
+  --color-text-muted: #6B6B6B; /* Sangat Muted */
+    
+  --color-border-subtle: #333333; /* Garis pemisah yang halus */
   
-  --color-border-subtle: #3a3a3a; /* Garis pemisah */
-  --color-accent: #64b5f6; /* Warna Aksen (Biru Muda) */
+  /* * NEW KILLER ACCENT COLOR: NEON CYAN/ELECTRIC BLUE * */
+  --color-accent: #00FFFF; /* Warna Aksen Neon Cyan yang Mencolok */
+  --color-accent-darker: #00A0A0; /* Variasi lebih gelap untuk shadow/hover */
 
-  /* Status Warna untuk CRUD Feedback (Soft/Low Saturation) */
-  --color-status-success: #66bb6a; /* Hijau */
-  --color-status-danger: #ef5350; /* Merah */
-  --color-status-warning: #ffb300; /* Kuning */
+  /* Status Warna (Tetap, tapi kontrasnya tinggi di latar belakang gelap) */
+  --color-status-success: #66bb6a;
+  --color-status-danger: #ef5350;
+  --color-status-warning: #ffb300;
 }
-
-/* OPSIONAL: Jika Anda ingin mendukung Light Mode di masa depan.
-  Ini akan diaktifkan jika body tidak memiliki [data-theme="dark"]
-*/
-/*
-[data-theme="light"] {
-  --color-bg-primary: #ffffff;
-  --color-bg-surface: #f7f7f7;
-  --color-bg-raised: #ffffff; 
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #6b7280;
-  --color-text-muted: #9ca3af;
-  --color-border-subtle: #e5e7eb;
-  --color-accent: #3b82f6; 
-  --color-status-success: #10b981;
-  --color-status-danger: #ef4444;
-  --color-status-warning: #f59e0b;
-}
-*/
 
 
 /* ---------------------------------------------------- */
@@ -52,34 +36,66 @@
 /* ---------------------------------------------------- */
 
 body {
-  /* Terapkan Dark Mode secara default menggunakan variabel yang baru */
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
-  /* Anda mungkin perlu menghapus @apply bg-dark text-light jika Anda mengandalkan variabel di atas */
-  /* @apply bg-dark text-light antialiased; */
-  antialiased: true; 
+  transition: background-color 0.3s, color 0.3s; 
+  /* antialiased: true; -- Ini harusnya @apply antialiased di Tailwind */
+  @apply antialiased; 
 }
 
-/* Styling untuk Input Fields */
+/* Styling untuk Input Fields (Dipertahankan, tapi dengan warna baru) */
 input, textarea {
-  caret-color: var(--color-accent); /* Menggunakan warna aksen yang konsisten */
-  background-color: var(--color-bg-raised); /* Membuat input menonjol */
+  caret-color: var(--color-accent); 
+  background-color: var(--color-bg-raised); 
   border: 1px solid var(--color-border-subtle);
   color: var(--color-text-primary);
+  transition: border-color 0.2s, box-shadow 0.2s; /* Tambah transisi */
 }
-/* Menghapus border saat fokus dan menggantinya dengan highlight aksen */
+
+/* Efek Fokus Input: Neon Glow pada Border */
 input:focus, textarea:focus {
     outline: none;
     border-color: var(--color-accent);
+    /* ** Efek Killer UI: Border Neon Glow ** */
+    box-shadow: 0 0 5px var(--color-accent-darker), 0 0 10px var(--color-accent-darker);
 }
 
-/* Custom Scrollbar (Diperbarui dengan variabel dark mode yang lebih halus) */
+/* Custom Scrollbar (Diubah agar lebih menyatu dengan tema #0A0A0A) */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-thumb { 
-  background: #374151; /* Abu-abu gelap yang lebih baik */
+  background: #333333; /* Lebih gelap dari #374151 */
   border-radius: 9999px; 
 }
-/* Scrollbar saat hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #4b5563;
+  background: #555555; /* Lebih terang saat hover */
+}
+
+/* ---------------------------------------------------- */
+/* 3. CUSTOM UTILITIES (GLASSMORPHISM & NEON HOVER) */
+/* ---------------------------------------------------- */
+
+/* A. Glassmorphism Utility (Untuk Sidebar/Card) */
+.glass-effect {
+  /* BACKGROUND: Semi-transparan menggunakan warna surface */
+  background-color: rgba(28, 28, 28, 0.7); /* Menggunakan --color-bg-surface (1C1C1C) dengan transparansi */
+  
+  /* CORE EFFECT: Membuat blur pada apa pun di belakang elemen */
+  backdrop-filter: blur(10px); 
+  -webkit-backdrop-filter: blur(10px);
+  
+  /* BORDER: Garis tipis aksen */
+  border: 1px solid rgba(51, 51, 51, 0.5); /* Menggunakan --color-border-subtle (333333) dengan transparansi */
+}
+
+/* B. Neon Hover Utility (Untuk Links/Buttons di Sidebar) */
+.neon-text-hover {
+    transition: color 0.3s, text-shadow 0.3s;
+}
+
+.neon-text-hover:hover {
+    color: var(--color-accent); /* Teks menjadi warna Neon Cyan */
+    /* ** Efek Killer UI: Teks Glow ** */
+    text-shadow: 
+      0 0 5px var(--color-accent-darker),
+      0 0 10px var(--color-accent-darker);
 }
