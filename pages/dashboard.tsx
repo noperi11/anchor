@@ -3,17 +3,15 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../utils/supabase";
 import { useRouter } from "next/router";
-
-// Import komponen yang sudah kita styling
 import Layout from "../components/Layout";
 import AnalyticsTable from "../components/AnalyticsTable";
 
 type Engagement = {
-  sessionId: string; // Tambahkan sessionId (asumsi ini kolom baru yang ingin Anda fetch)
+  sessionId: string;
   scoring: number;
   engagement: string;
   sessionContext: string;
-  // userId: string; <-- Dihapus karena tidak ada di tabel Engagement
+  brand: string; // Tambahkan kolom Brand untuk filtering dan tampilan
 };
 
 type User = {
@@ -21,9 +19,10 @@ type User = {
   email: string;
 };
 
-// 1. DEFINISI KOLOM UNTUK TABEL ENGAGEMENT MENTAH
+// DEFINISI KOLOM UNTUK TABEL ENGAGEMENT MENTAH
 const ENGAGEMENT_COLUMNS = [
   { key: 'sessionId', header: 'Session ID' },
+  { key: 'brand', header: 'Brand' }, // Tampilkan kolom Brand
   { key: 'scoring', header: 'Score' },
   { key: 'engagement', header: 'Type' },
   { key: 'sessionContext', header: 'Context' },
@@ -45,25 +44,40 @@ export default function Dashboard() {
     const parsed: User = JSON.parse(stored);
     setUser(parsed);
 
-    async function fetchEngagement() {
+    async function fetchUserBrandAndEngagement() {
       setLoading(true);
+      const userId = parsed.id;
 
-      // 2. MENGUBAH QUERY SUPABASE: Hapus 'userId' dari kolom yang di-select
-      const { data, error } = await supabase
+      // 1. FETCH PROFILE: Ambil display_name (Brand Name) dari tabel profiles
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("display_name")
+        .eq("id", userId) // Filter profiles.id berdasarkan user.id
+        .single();
+
+      if (profileError || !profileData) {
+        console.error("Error fetching profile or profile not found:", profileError);
+        setLoading(false);
+        return;
+      }
+      
+      const userBrandName = profileData.display_name;
+
+      // 2. FETCH ENGAGEMENT: Gunakan Brand Name untuk filter tabel Engagement
+      const { data: engagementData, error: engagementError } = await supabase
         .from("Engagement")
-        // Select kolom yang Anda miliki: sessionId, Scoring, Engagement, sessionContext
-        .select("sessionId, Scoring, Engagement, sessionContext") 
-        .eq("userId", parsed.id); // <-- Masih menggunakan userId di WHERE clause untuk filtering
+        .select("sessionId, Brand, Scoring, Engagement, sessionContext") // Tambahkan Brand dan sessionId
+        .eq("Brand", userBrandName); // FILTER PENTING: Engagement.Brand = profiles.display_name
 
-      if (error) {
-        console.error("Error fetching engagement:", error);
+      if (engagementError) {
+        console.error("Error fetching engagement:", engagementError);
         setLoading(false);
         return;
       }
 
-      const formattedData: Engagement[] = (data || []).map((e: any) => ({
-        sessionId: e.sessionId || 'N/A', // Mapping sessionId
-        // userId: e.userId, <-- Dihapus dari mapping
+      const formattedData: Engagement[] = (engagementData || []).map((e: any) => ({
+        sessionId: e.sessionId || 'N/A',
+        brand: e.Brand, // Mapping kolom Brand
         scoring: e.Scoring,
         engagement: e.Engagement,
         sessionContext: e.sessionContext,
@@ -73,7 +87,7 @@ export default function Dashboard() {
       setLoading(false);
     }
 
-    fetchEngagement();
+    fetchUserBrandAndEngagement();
   }, [router]);
 
   if (!user)
@@ -90,45 +104,27 @@ export default function Dashboard() {
     <Layout>
       <div className="p-2">
         <h1 className="text-3xl font-bold mb-4">Welcome, {user.email}</h1>
-        <h2 className="text-xl font-semibold mb-6">Your Dashboard</h2>
+        {/* REVISI 2: Ubah Judul */}
+        <h2 className="text-xl font-semibold mb-6">ANCHOR Dashboard</h2>
 
-        {/* Tombol Navigasi (Styling Dark Mode) */}
-        <div className="flex gap-4 mb-8">
-          <a
-            href="/products"
-            style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-text-primary)' }}
-            className="py-2 px-4 rounded-xl hover:opacity-90 transition font-semibold"
-          >
-            Go to Products →
-          </a>
-          <a
-            href="/products/create"
-            style={{ backgroundColor: 'var(--color-status-success)', color: 'var(--color-text-primary)' }}
-            className="py-2 px-4 rounded-xl hover:opacity-90 transition font-semibold"
-          >
-            + Create Product
-          </a>
-        </div>
-
-        {/* ---------------------------------------------------- */}
-        {/* TABEL ENGAGEMENT MENTAH (MENGGANTIKAN DUMMY DATA) */}
-        {/* ---------------------------------------------------- */}
+        {/* REVISI 1: HAPUS TOMBOL NAVIGASI */}
+        {/* <div className="flex gap-4 mb-8">... Tombol dihapus ...</div> */}
+        
+        {/* TABEL ENGAGEMENT MENTAH (Data dari filter Brand) */}
         <div className="mb-8">
             {loading ? (
                 <div style={{ color: 'var(--color-text-secondary)' }}>Loading session data...</div>
             ) : (
                 <AnalyticsTable 
                     title="Raw Session Engagement Data"
-                    columns={ENGAGEMENT_COLUMNS} // Menggunakan definisi kolom baru
-                    data={engagements} // <-- Menggunakan data yang di-fetch
+                    columns={ENGAGEMENT_COLUMNS}
+                    data={engagements}
                 />
             )}
         </div>
         
-        {/* ---------------------------------------------------- */}
-        {/* BAGIAN ENGAGEMENT CARDS ASLI (Dipertahankan di bawah) */}
-        {/* ---------------------------------------------------- */}
-        <h2 className="text-xl font-semibold mb-4 mt-8">User Engagement Data (Cards)</h2>
+        {/* BAGIAN ENGAGEMENT CARDS ASLI */}
+        <h2 className="text-xl font-semibold mb-4 mt-8">Engagement Metrics Overview</h2>
 
         {loading ? (
           <div style={{ color: 'var(--color-text-secondary)' }}>Loading additional data...</div>
@@ -138,16 +134,16 @@ export default function Dashboard() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {engagements.map((e, idx) => (
               <div
-                key={`${e.sessionId}-${idx}`} // Menggunakan sessionId untuk key
+                key={`${e.sessionId}-${idx}`}
                 style={{ backgroundColor: 'var(--color-bg-surface)' }} 
                 className="p-4 rounded-xl shadow hover:shadow-lg transition"
               >
-                <h3 className="text-lg font-bold mt-2">Score: {e.scoring}</h3>
+                <h3 className="text-lg font-bold mt-2">Brand: {e.brand}</h3> {/* Tampilkan Brand */}
                 <p className="mt-1" style={{ color: 'var(--color-text-secondary)' }}>
-                    {e.engagement}
+                    Score: {e.scoring}
                 </p>
                 <p className="mt-2 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                  Context: {e.sessionContext}
+                  Type: {e.engagement}
                 </p>
               </div>
             ))}
