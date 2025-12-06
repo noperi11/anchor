@@ -1,3 +1,4 @@
+// components/ProductList.tsx
 import Link from "next/link";
 
 export default function ProductList({ products, onDelete }: any) {
@@ -6,24 +7,39 @@ export default function ProductList({ products, onDelete }: any) {
       {products.map((p: any) => (
         <div
           key={p.id}
-          className="bg-[#111] border border-neutral-800 p-5 rounded-xl flex items-center justify-between"
+          // Mengganti warna hardcoded dengan variabel CSS untuk Dark Mode
+          style={{
+            backgroundColor: 'var(--color-bg-surface)', 
+            borderColor: 'var(--color-border-subtle)',
+          }}
+          className="border p-5 rounded-xl flex items-center justify-between"
         >
           <div>
             <h3 className="text-lg font-semibold">{p.name}</h3>
-            <p className="text-grayText text-sm">{p.category}</p>
+            {/* Mengganti text-grayText dengan variabel untuk teks sekunder/muted */}
+            <p 
+              style={{ color: 'var(--color-text-secondary)' }} 
+              className="text-sm"
+            >
+              {p.category}
+            </p>
             <p className="text-sm mt-1">Rp {p.price}</p>
           </div>
 
           <div className="flex items-center gap-4">
+            {/* Link Edit menggunakan warna Aksen */}
             <Link
               href={`/products/${p.id}/edit`}
-              className="text-blue-400 hover:text-blue-300"
+              style={{ color: 'var(--color-accent)' }} 
+              className="hover:opacity-80 transition"
             >
               Edit
             </Link>
 
+            {/* Tombol Delete menggunakan warna Status Danger */}
             <button
-              className="text-red-400 hover:text-red-300"
+              style={{ color: 'var(--color-status-danger)' }}
+              className="hover:opacity-80 transition"
               onClick={() => onDelete(p.id)}
             >
               Delete
