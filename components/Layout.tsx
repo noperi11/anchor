@@ -11,23 +11,21 @@ const orbit = Orbit({
   variable: '--font-orbit', 
 })
 
-
 type Props = { children: ReactNode; showHeader?: boolean };
 
 export default function Layout({ children, showHeader = true }: Props) {
   return (
-    // 2. TERAPKAN FONT VARIABLE & FONT CLASS
+    // Terapkan font class ke container utama
     <div className={`min-h-screen ${orbit.className}`}>
       {showHeader && (
         <header 
-          // 3. KILLER HEADER: Sticky & Shadow
+          
           className="sticky top-0 z-50 p-4 border-b border-b-transparent transition-all duration-300 shadow-2xl" 
         >
           {/* GLASSMORPHISM LAYER */}
           <div 
             className="glass-effect absolute inset-0 -z-10 border-b" 
             style={{
-              // Border bottom pada layer kaca
               borderBottomColor: 'var(--color-border-subtle)', 
             }}
           ></div>
@@ -39,10 +37,10 @@ export default function Layout({ children, showHeader = true }: Props) {
                 className="text-xl font-bold uppercase" 
                 style={{ color: 'var(--color-accent)' }}
               >
-                Killer UI
+                ANCHOR
               </h1>
               
-              {/* Tautan Navigasi Utama: Menerapkan Neon Hover */}
+              {/* Tautan Navigasi Utama: Neon Hover */}
               <Link 
                 href="/dashboard" 
                 className="neon-text-hover text-sm font-medium" 
@@ -72,8 +70,6 @@ export default function Layout({ children, showHeader = true }: Props) {
         </header>
       )}
 
-      {/* Konten utama kini full width untuk mendukung lebar tabel yang penuh (jika tidak dibatasi di main) */}
-      {/* Jika Anda ingin konten tetap di tengah, gunakan max-w-5xl di sini: */}
       <main className="max-w-5xl mx-auto p-6">{children}</main>
     </div>
   );
