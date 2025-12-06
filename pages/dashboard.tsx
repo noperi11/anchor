@@ -3,15 +3,54 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../utils/supabase";
 import { useRouter } from "next/router";
+
+// Import komponen yang sudah kita styling
 import Layout from "../components/Layout";
 import AnalyticsTable from "../components/AnalyticsTable";
 
+// -----------------------------------------------------------------
+// HELPER REGEX FUNCTIONS
+// -----------------------------------------------------------------
+
+// Fungsi untuk mengekstrak 'key_facts_to_remember'
+const extractMemoryMarker = (contextString: string) => {
+  const regex = /memory_markers key_facts_to_remember=(.*?)(?:\s|\.$)/; 
+  const match = contextString.match(regex);
+  
+  if (match && match[1]) {
+    return match[1].trim(); 
+  }
+  return 'Not found';
+};
+
+// Fungsi BARU untuk mengekstrak 'monitoringGuidance'
+const extractMonitoringGuidance = (contextString: string) => {
+  // Regex mencari "monitoringGuidance": "teks yang diinginkan"
+  // Flag 's' (dotAll) memastikan '.' mencocokkan karakter newline
+  const regex = /"monitoringGuidance":\s*"(.*?)"/s; 
+  
+  const match = contextString.match(regex);
+  
+  if (match && match[1]) {
+    // Hapus karakter escape (misalnya \n) dari teks yang diekstrak
+    return match[1].replace(/\\n/g, ' ').trim(); 
+  }
+  return 'Not available';
+};
+
+
+// -----------------------------------------------------------------
+// TYPES & CONSTANTS
+// -----------------------------------------------------------------
+
 type Engagement = {
   sessionId: string;
-  scoring: number;
+  scoring: number; // Tetap di-fetch, tapi tidak ditampilkan sebagai kolom utama
   engagement: string;
   sessionContext: string;
-  brand: string; // Tambahkan kolom Brand untuk filtering dan tampilan
+  brand: string;
+  keyFact: string; // Hasil dari extractMemoryMarker
+  finalEvaluation: string; // Hasil dari extractMonitoringGuidance (Revisi Baru)
 };
 
 type User = {
@@ -22,11 +61,17 @@ type User = {
 // DEFINISI KOLOM UNTUK TABEL ENGAGEMENT MENTAH
 const ENGAGEMENT_COLUMNS = [
   { key: 'sessionId', header: 'Session ID' },
-  { key: 'brand', header: 'Brand' }, // Tampilkan kolom Brand
-  { key: 'scoring', header: 'Score' },
+  { key: 'brand', header: 'Brand' },
   { key: 'engagement', header: 'Type' },
-  { key: 'sessionContext', header: 'Context' },
+  // REVISI BARU: Mengganti Score dengan Final Evaluation
+  { key: 'finalEvaluation', header: 'Final Evaluation' }, 
+  { key: 'keyFact', header: 'Key Fact' }, 
 ];
+
+
+// -----------------------------------------------------------------
+// KOMPONEN DASHBOARD
+// -----------------------------------------------------------------
 
 export default function Dashboard() {
   const router = useRouter();
@@ -48,11 +93,11 @@ export default function Dashboard() {
       setLoading(true);
       const userId = parsed.id;
 
-      // 1. FETCH PROFILE: Ambil display_name (Brand Name) dari tabel profiles
+      // 1. FETCH PROFILE: Ambil display_name (Brand Name)
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select("display_name")
-        .eq("id", userId) // Filter profiles.id berdasarkan user.id
+        .eq("id", userId)
         .single();
 
       if (profileError || !profileData) {
@@ -63,11 +108,11 @@ export default function Dashboard() {
       
       const userBrandName = profileData.display_name;
 
-      // 2. FETCH ENGAGEMENT: Gunakan Brand Name untuk filter tabel Engagement
+      // 2. FETCH ENGAGEMENT: Gunakan Brand Name untuk filter
       const { data: engagementData, error: engagementError } = await supabase
         .from("Engagement")
-        .select("sessionId, Brand, Scoring, Engagement, sessionContext") // Tambahkan Brand dan sessionId
-        .eq("Brand", userBrandName); // FILTER PENTING: Engagement.Brand = profiles.display_name
+        .select("sessionId, Brand, Scoring, Engagement, sessionContext") 
+        .eq("Brand", userBrandName); 
 
       if (engagementError) {
         console.error("Error fetching engagement:", engagementError);
@@ -77,10 +122,14 @@ export default function Dashboard() {
 
       const formattedData: Engagement[] = (engagementData || []).map((e: any) => ({
         sessionId: e.sessionId || 'N/A',
-        brand: e.Brand, // Mapping kolom Brand
+        brand: e.Brand,
         scoring: e.Scoring,
         engagement: e.Engagement,
-        sessionContext: e.sessionContext,
+        sessionContext: e.sessionContext, 
+        
+        // MAPPING BARU: Ekstraksi Data Khusus
+        keyFact: extractMemoryMarker(e.sessionContext), 
+        finalEvaluation: extractMonitoringGuidance(e.sessionContext), // <-- Mapping Revisi Final
       }));
 
       setEngagements(formattedData);
@@ -107,10 +156,7 @@ export default function Dashboard() {
         {/* REVISI 2: Ubah Judul */}
         <h2 className="text-xl font-semibold mb-6">ANCHOR Dashboard</h2>
 
-        {/* REVISI 1: HAPUS TOMBOL NAVIGASI */}
-        {/* <div className="flex gap-4 mb-8">... Tombol dihapus ...</div> */}
-        
-        {/* TABEL ENGAGEMENT MENTAH (Data dari filter Brand) */}
+        {/* TABEL ENGAGEMENT MENTAH */}
         <div className="mb-8">
             {loading ? (
                 <div style={{ color: 'var(--color-text-secondary)' }}>Loading session data...</div>
@@ -118,7 +164,7 @@ export default function Dashboard() {
                 <AnalyticsTable 
                     title="Raw Session Engagement Data"
                     columns={ENGAGEMENT_COLUMNS}
-                    data={engagements}
+                    data={engagements} 
                 />
             )}
         </div>
@@ -138,12 +184,13 @@ export default function Dashboard() {
                 style={{ backgroundColor: 'var(--color-bg-surface)' }} 
                 className="p-4 rounded-xl shadow hover:shadow-lg transition"
               >
-                <h3 className="text-lg font-bold mt-2">Brand: {e.brand}</h3> {/* Tampilkan Brand */}
+                <h3 className="text-lg font-bold mt-2">Brand: {e.brand}</h3>
                 <p className="mt-1" style={{ color: 'var(--color-text-secondary)' }}>
                     Score: {e.scoring}
                 </p>
+                {/* Tampilkan Final Evaluation di Cards juga */}
                 <p className="mt-2 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                  Type: {e.engagement}
+                  Final Eval: {e.finalEvaluation}
                 </p>
               </div>
             ))}
