@@ -26,7 +26,7 @@ export default function Layout({ children, showHeader = true }: Props) {
                 className="text-xl font-bold uppercase" 
                 style={{ color: 'var(--color-accent)' }}
               >
-                Killer UI
+                ANCHOR
               </h1>
               
               {/* Tautan Navigasi Utama: Menerapkan Neon Hover */}
