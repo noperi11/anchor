@@ -12,27 +12,29 @@ import AnalyticsTable from "../components/AnalyticsTable";
 // HELPER REGEX FUNCTIONS
 // -----------------------------------------------------------------
 
-// Fungsi untuk mengekstrak 'key_facts_to_remember'
 const extractMemoryMarker = (contextString: string) => {
-  const regex = /memory_markers key_facts_to_remember=(.*?)(?:\s|\.$)/; 
+  // Pola baru: Mencari 'key_facts_to_remember=' dan menangkap semua teks (.*?) 
+  // hingga bertemu spasi yang diikuti oleh kata 'preferences_expressed=' atau akhir string.
+  const regex = /key_facts_to_remember=(.*?)(?:\s+preferences_expressed=|$)/;
+  
   const match = contextString.match(regex);
   
   if (match && match[1]) {
     return match[1].trim(); 
   }
-  return 'Not found';
+  return 'Not found'; 
 };
 
-// Fungsi BARU untuk mengekstrak 'monitoringGuidance'
 const extractMonitoringGuidance = (contextString: string) => {
+  // Pola yang lebih kuat: Mencari "monitoringGuidance": " dan menangkap semua karakter non-greedy (.*?)
+  // sampai kutipan ganda penutup ". Pola [\s\S]*? akan menangkap newline.
   const regex = /"monitoringGuidance":\s*"([\s\S]*?)"/; 
   
   const match = contextString.match(regex);
   
   if (match && match[1]) {
-    // match[1] berisi grup tangkapan (capturing group)
-    // Hapus karakter escape (misalnya \n) dari teks yang diekstrak
-    return match[1].replace(/\\n/g, ' ').trim(); 
+    // Mengganti semua newline (\n) dan backslash ganda (\\n) dengan spasi
+    return match[1].replace(/\\n/g, ' ').replace(/\n/g, ' ').trim(); 
   }
   return 'Not available';
 };
