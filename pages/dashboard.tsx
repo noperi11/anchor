@@ -12,15 +12,24 @@ import AnalyticsTable from "../components/AnalyticsTable";
 // HELPER REGEX FUNCTIONS
 // -----------------------------------------------------------------
 
+// Fungsi 1: Mengekstrak 'key_facts_to_remember' (Diperbaiki)
 const extractMemoryMarker = (contextString: string) => {
-  // Pola baru: Mencari 'key_facts_to_remember=' dan menangkap semua teks (.*?) 
-  // hingga bertemu spasi yang diikuti oleh kata 'preferences_expressed=' atau akhir string.
-  const regex = /key_facts_to_remember=(.*?)(?:\s+preferences_expressed=|$)/;
+  // Pola baru: Menangkap semua teks (.*?) hingga bertemu spasi, koma, 'preferences_expressed=' atau akhir string.
+  const regex = /key_facts_to_remember=(.*?)(?:\s+preferences_expressed=|,|\s|$)/;
   
   const match = contextString.match(regex);
   
-  if (match && match[1]) {
-    return match[1].trim(); 
+  // Pola yang lebih aman untuk koma/spasi:
+  const safeRegex = /key_facts_to_remember=([^,.\s]+.*?)(\s+preferences_expressed=|$)/;
+  
+  // Mari kita pakai pola yang paling mendekati keinginan Anda:
+  const finalRegex = /key_facts_to_remember=(.*?)(?:\s+preferences_expressed=|,|$)/;
+
+  const finalMatch = contextString.match(finalRegex);
+  
+  if (finalMatch && finalMatch[1]) {
+    // Karena koma (,) sekarang menjadi batas, kita harus pastikan hasil tangkapan dibersihkan.
+    return finalMatch[1].trim(); 
   }
   return 'Not found'; 
 };
