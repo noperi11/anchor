@@ -25,13 +25,12 @@ const extractMemoryMarker = (contextString: string) => {
 
 // Fungsi BARU untuk mengekstrak 'monitoringGuidance'
 const extractMonitoringGuidance = (contextString: string) => {
-  // Regex mencari "monitoringGuidance": "teks yang diinginkan"
-  // Flag 's' (dotAll) memastikan '.' mencocokkan karakter newline
-  const regex = /"monitoringGuidance":\s*"(.*?)"/s; 
+  const regex = /"monitoringGuidance":\s*"([\s\S]*?)"/; 
   
   const match = contextString.match(regex);
   
   if (match && match[1]) {
+    // match[1] berisi grup tangkapan (capturing group)
     // Hapus karakter escape (misalnya \n) dari teks yang diekstrak
     return match[1].replace(/\\n/g, ' ').trim(); 
   }
