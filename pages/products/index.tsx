@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; // <--- PASTIKAN REACT DIIMPORT
 // Hapus import { createClient } dari sini, gunakan `supabase` hanya untuk action langsung (DELETE)
 import Layout from "@/components/Layout";
 import AnalyticsTable from "@/components/AnalyticsTable"; 
