@@ -1,31 +1,79 @@
-import { supabase } from "../../utils/supabase"; // Pastikan path ke supabase utility sudah benar
+import { supabase } from "../../utils/supabase"; 
 import { NextApiRequest, NextApiResponse } from 'next';
 
 // -----------------------------------------------------------------
-// HELPER REGEX FUNCTIONS (DIPINDAHKAN DARI FRONTEND)
+// TYPES (Untuk konsistensi)
 // -----------------------------------------------------------------
 
-// Fungsi 1: Mengekstrak 'key_facts_to_remember'
+type Engagement = {
+  sessionId: string;
+  scoring: number;
+  engagement: string; 
+  sessionContext: string;
+  brand: string;
+  keyFact: string; 
+  finalEvaluation: string; 
+};
+
+type SummaryMetric = {
+    metric: string;
+    value: string | number;
+};
+
+// -----------------------------------------------------------------
+// HELPER REGEX FUNCTIONS (Dipertahankan di Backend)
+// -----------------------------------------------------------------
+
 const extractMemoryMarker = (contextString: string) => {
   const finalRegex = /key_facts_to_remember=(.*?)(?:\s+preferences_expressed=|,|$)/;
   const finalMatch = contextString.match(finalRegex);
-  
   if (finalMatch && finalMatch[1]) {
     return finalMatch[1].trim(); 
   }
   return 'Not found'; 
 };
 
-// Fungsi 2: Mengekstrak 'monitoringGuidance'
 const extractMonitoringGuidance = (contextString: string) => {
-  const regex = /"monitoringGuidance":\s*"([\s\S]*?)"/; 
+  const regex = /"monitoringGuidance"[\s\S]*?:[\s\S]*?"([\s\S]*?)"/; 
   const match = contextString.match(regex);
-  
   if (match && match[1]) {
-    // Mengganti semua newline (\n) dan backslash ganda (\\n) dengan spasi
     return match[1].replace(/\\n/g, ' ').replace(/\n/g, ' ').trim(); 
   }
   return 'Not available';
+};
+
+// -----------------------------------------------------------------
+// HELPER SUMMARY FUNCTION (DIPINDAHKAN KE BACKEND)
+// -----------------------------------------------------------------
+
+const calculateSummaryMetrics = (engagements: Engagement[]): SummaryMetric[] => {
+  if (engagements.length === 0) {
+    return [
+      { metric: 'Total Engagement Records', value: 0 },
+      { metric: 'Most Frequent Type', value: 'N/A' },
+    ];
+  }
+
+  const typeCounts = engagements.reduce((acc, e) => {
+    const type = e.engagement || 'unknown';
+    acc[type] = (acc[type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  let mostFrequentType = 'N/A';
+  let maxCount = 0;
+  
+  for (const type in typeCounts) {
+    if (typeCounts[type] > maxCount) {
+      maxCount = typeCounts[type];
+      mostFrequentType = `${type} (${maxCount})`;
+    }
+  }
+
+  return [
+    { metric: 'Total Engagement Records', value: engagements.length },
+    { metric: 'Most Frequent Type', value: mostFrequentType },
+  ];
 };
 
 
@@ -38,7 +86,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // 1. Ambil User ID dari query parameter (disini kita asumsikan client mengirimnya)
   const userId = req.query.userId as string;
 
   if (!userId) {
@@ -46,20 +93,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // A. FETCH PROFILE: Ambil display_name (Brand Name)
-    const { data: profileData, error: profileError } = await supabase
+    // 1. FETCH PROFILE
+    const { data: profileData } = await supabase
       .from("profiles")
       .select("display_name")
       .eq("id", userId)
       .single();
-
-    if (profileError || !profileData) {
+    
+    if (!profileData) {
       return res.status(404).json({ error: 'Profile not found or access denied.' });
     }
     
     const userBrandName = profileData.display_name;
 
-    // B. FETCH ENGAGEMENT: Gunakan Brand Name untuk filter
+    // 2. FETCH ENGAGEMENT
     const { data: engagementData, error: engagementError } = await supabase
       .from("Engagement")
       .select("sessionId, Brand, Scoring, Engagement, sessionContext") 
@@ -70,21 +117,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json({ error: 'Error fetching engagement data.' });
     }
 
-    // C. PROCESSING: Jalankan Logic Regex di Server
-    const processedData = (engagementData || []).map((e: any) => ({
+    // 3. PROCESSING (Regex & Mapping)
+    const processedData: Engagement[] = (engagementData || []).map((e: any) => ({
       sessionId: e.sessionId || 'N/A',
       brand: e.Brand,
       scoring: e.Scoring,
       engagement: e.Engagement,
       sessionContext: e.sessionContext, 
-      
-      // Jalankan Regex di sisi server!
       keyFact: extractMemoryMarker(e.sessionContext), 
       finalEvaluation: extractMonitoringGuidance(e.sessionContext),
     }));
 
-    // D. Kirim data yang sudah bersih ke Frontend
-    res.status(200).json(processedData);
+    // 4. SUMMARY CALCULATION (Di Server)
+    const summaryMetrics = calculateSummaryMetrics(processedData); 
+
+    // 5. Kirim data TERSTRUKTUR
+    res.status(200).json({
+      engagements: processedData,
+      summary: summaryMetrics,
+    });
     
   } catch (e) {
     console.error("Server Error:", e);
