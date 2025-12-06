@@ -2,21 +2,84 @@
 @tailwind components;
 @tailwind utilities;
 
-/* optional: custom focus and scrollbar */
-:root{
-  --bg:#0b0b0b;
-  --card:#0f0f0f;
-  --muted:#9ca3af;
+/* ---------------------------------------------------- */
+/* 1. DEFINISI VARIABEL WARNA (DARK MODE SEBAGAI DEFAULT) */
+/* ---------------------------------------------------- */
+
+:root {
+  /* ======================================= */
+  /* DARK MODE VARIABLES (Default for your current setup) */
+  /* ======================================= */
+  --color-bg-primary: #121212; /* Latar Belakang Paling Gelap */
+  --color-bg-surface: #1e1e1e; /* Untuk Sidebar, Header, Card */
+  --color-bg-raised: #2a2a2a; /* Untuk Input fields/Modal (tampak lebih terang) */
+
+  --color-text-primary: #e0e0e0; /* Teks Utama (Putih Pucat) */
+  --color-text-secondary: #b0b0b0; /* Teks Sekunder/Muted */
+  --color-text-muted: #9ca3af; /* (Sama seperti --muted Anda) */
+  
+  --color-border-subtle: #3a3a3a; /* Garis pemisah */
+  --color-accent: #64b5f6; /* Warna Aksen (Biru Muda) */
+
+  /* Status Warna untuk CRUD Feedback (Soft/Low Saturation) */
+  --color-status-success: #66bb6a; /* Hijau */
+  --color-status-danger: #ef5350; /* Merah */
+  --color-status-warning: #ffb300; /* Kuning */
 }
+
+/* OPSIONAL: Jika Anda ingin mendukung Light Mode di masa depan.
+  Ini akan diaktifkan jika body tidak memiliki [data-theme="dark"]
+*/
+/*
+[data-theme="light"] {
+  --color-bg-primary: #ffffff;
+  --color-bg-surface: #f7f7f7;
+  --color-bg-raised: #ffffff; 
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
+  --color-border-subtle: #e5e7eb;
+  --color-accent: #3b82f6; 
+  --color-status-success: #10b981;
+  --color-status-danger: #ef4444;
+  --color-status-warning: #f59e0b;
+}
+*/
+
+
+/* ---------------------------------------------------- */
+/* 2. PENERAPAN GLOBAL STYLING */
+/* ---------------------------------------------------- */
 
 body {
-  @apply bg-dark text-light antialiased;
-  background-color: var(--bg);
+  /* Terapkan Dark Mode secara default menggunakan variabel yang baru */
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  /* Anda mungkin perlu menghapus @apply bg-dark text-light jika Anda mengandalkan variabel di atas */
+  /* @apply bg-dark text-light antialiased; */
+  antialiased: true; 
 }
 
+/* Styling untuk Input Fields */
 input, textarea {
-  caret-color: #60a5fa;
+  caret-color: var(--color-accent); /* Menggunakan warna aksen yang konsisten */
+  background-color: var(--color-bg-raised); /* Membuat input menonjol */
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-primary);
+}
+/* Menghapus border saat fokus dan menggantinya dengan highlight aksen */
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
 }
 
-::-webkit-scrollbar { width: 8px; height:8px; }
-::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 9999px; }
+/* Custom Scrollbar (Diperbarui dengan variabel dark mode yang lebih halus) */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { 
+  background: #374151; /* Abu-abu gelap yang lebih baik */
+  border-radius: 9999px; 
+}
+/* Scrollbar saat hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
