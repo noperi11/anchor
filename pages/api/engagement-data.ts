@@ -21,7 +21,7 @@ type SummaryMetric = {
 };
 
 // -----------------------------------------------------------------
-// HELPER REGEX FUNCTIONS (Dipertahankan di Backend)
+// HELPER REGEX FUNCTIONS 
 // -----------------------------------------------------------------
 
 const extractMemoryMarker = (contextString: string) => {
@@ -33,13 +33,19 @@ const extractMemoryMarker = (contextString: string) => {
   return 'Not found'; 
 };
 
-const extractMonitoringGuidance = (contextString: string) => {
-  const regex = /"monitoringGuidance"[\s\S]*?:[\s\S]*?"([\s\S]*?)"/; 
-  const match = contextString.match(regex);
-  if (match && match[1]) {
-    return match[1].replace(/\\n/g, ' ').replace(/\n/g, ' ').trim(); 
-  }
-  return 'Not available';
+const extractReasoning = (contextString) => {
+    // Regex mencari kunci "reasoning", diikuti oleh tanda titik dua (:), 
+    // dan menangkap (capture group) string nilai di antara tanda kutip ganda ("...").
+    const regex = /"reasoning"[\s\S]*?:[\s\S]*?"([\s\S]*?)"/; 
+    
+    const match = contextString.match(regex);
+    
+    if (match && match[1]) {
+        return match[1].replace(/\\n/g, ' ').replace(/\n/g, ' ').trim(); 
+    }
+    
+    // Nilai default jika kunci tidak ditemukan.
+    return 'Not available';
 };
 
 // -----------------------------------------------------------------
