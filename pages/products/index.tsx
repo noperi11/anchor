@@ -86,7 +86,7 @@ export default function ProductsPage() {
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this product?")) return;
     
-    const { error } = await supabase.from("Products").delete().eq("ProductId", id);
+    const { error } = await supabase.from("products").delete().eq("ProductId", id);
     
     if (error) {
         console.error("Error deleting product:", error);
