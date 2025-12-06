@@ -4,16 +4,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------------------------------------------------- */
+/* 1. DEFINISI VARIABEL WARNA (KILLER DARK MODE) */
+/* ---------------------------------------------------- */
 
 :root {
   /* ======================================= */
-  /* KILLER DARK MODE VARIABLES (Default) */
+  /* KILLER DARK MODE VARIABLES */
   /* ======================================= */
   --color-bg-primary: #0A0A0A; /* Latar Belakang PALING GELAP (Hitam) */
-  --color-bg-surface: #1C1C1C; /* Untuk Sidebar, Header, Card (Sangat gelap) */
+  --color-bg-surface: #1C1C1C; /* Untuk Sidebar, Header, Card */
   --color-bg-raised: #282828; /* Untuk Input fields/Modal */
 
-  --color-text-primary: #FAFAFA; /* Teks Utama (Hampir Putih) */
+  --color-text-primary: #FAFAFA; /* Teks Utama */
   --color-text-secondary: #B0B0B0; /* Teks Sekunder/Muted */
   --color-text-muted: #6B6B6B; /* Sangat Muted */
   --color-border-subtle: #333333; /* Garis pemisah yang halus */
@@ -25,7 +28,7 @@
   /* Teks Aksen Hitam (Untuk di atas latar belakang Neon) */
   --color-text-accent: #0A0A0A; 
 
-  /* Status Warna (Tetap) */
+  /* Status Warna */
   --color-status-success: #66bb6a;
   --color-status-danger: #ef5350;
   --color-status-warning: #ffb300;
@@ -38,7 +41,6 @@
 
 body {
   /* Font Family akan diatur melalui CSS Variable di Layout.tsx */
-  /* Misalnya: font-family: var(--font-electrolize), sans-serif; */
   color: var(--color-text-primary);
   transition: color 0.3s; 
   @apply antialiased; 
@@ -89,7 +91,7 @@ input:focus, textarea:focus {
   backdrop-filter: blur(10px); 
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(51, 51, 51, 0.5); 
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4); /* Bayangan lebih gelap untuk tema gelap */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4); 
 }
 
 /* B. Neon Text Hover Utility (Untuk Links/Teks) */
@@ -99,7 +101,6 @@ input:focus, textarea:focus {
 
 .neon-text-hover:hover {
     color: var(--color-accent); 
-    /* Efek Killer UI: Teks Glow */
     text-shadow: 
       0 0 5px var(--color-accent-darker),
       0 0 10px var(--color-accent-darker);
