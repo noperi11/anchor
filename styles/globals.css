@@ -32,13 +32,20 @@
 /* ---------------------------------------------------- */
 
 body {
-  background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
-  transition: background-color 0.3s, color 0.3s; 
-  /* antialiased: true; -- Ini harusnya @apply antialiased di Tailwind */
+  transition: color 0.3s; 
   @apply antialiased; 
-}
 
+
+  background: linear-gradient(
+    to bottom right, 
+    #1C1C1C 0%, /* Mulai dari Darker Gray (White tidak terlalu cocok di dark theme) */
+    #0A0A0A 60%  /* Berakhir di Black Paling Pekat */
+  );
+  /* Tambahkan min-height agar gradient terlihat */
+  min-height: 100vh;
+  background-attachment: fixed; /* Penting agar gradient tidak berulang saat scroll */
+}
 /* Styling untuk Input Fields (Dipertahankan, tapi dengan warna baru) */
 input, textarea {
   caret-color: var(--color-accent); 
