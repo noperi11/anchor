@@ -1,75 +1,93 @@
+// components/AnalyticsTable.tsx
 import React from 'react';
 
-// Definisikan tipe untuk data dan kolom agar lebih aman
 type Column = {
-  key: string; // Kunci properti yang akan diambil dari objek data
-  header: string; // Teks yang ditampilkan di header tabel
+  key: string; 
+  header: string;
 };
 
 type Props = {
-  data: any[]; // Array of objects (e.g., Engagement[])
-  columns: Column[]; // Array of column definitions
-  title: string; // Judul Tabel
+  data: any[]; 
+  columns: Column[];
+  title: string; 
 };
 
 export default function AnalyticsTable({ data, columns, title }: Props) {
-  // Semua styling Dark Mode sudah konsisten
+  
   return (
+    // 1. KILLER UI CONTAINER: Ganti styling inline dengan Glassmorphism
     <div 
-      style={{
-        backgroundColor: 'var(--color-bg-surface)', 
-        borderColor: 'var(--color-border-subtle)',
-      }}
-      className="p-6 border rounded-xl"
+      className="p-6 rounded-xl overflow-hidden glass-effect" 
+      // Hapus styling inline untuk bg-surface dan border-subtle karena sudah dihandle oleh .glass-effect
     >
-      <h2 className="text-xl font-semibold mb-4">{title}</h2>
+      
+      {/* 2. JUDUL: Gunakan warna aksen Neon */}
+      <h2 
+        className="text-2xl font-bold mb-6 tracking-wider" 
+        style={{ color: 'var(--color-accent)' }}
+      >
+        {title}
+      </h2>
 
-      <table className="w-full text-left">
-        <thead>
-          {/* BARIS HEADER */}
-          <tr 
-            className="border-b"
-            style={{ 
-              color: 'var(--color-text-secondary)',
-              borderBottomColor: 'var(--color-border-subtle)',
-            }}
-          >
-            {/* Menggunakan COLUMNS yang dinamis */}
-            {columns.map((col) => (
-              <th key={col.key} className="py-2">
-                {col.header}
-              </th>
-            ))}
-          </tr>
-        </thead>
+      {/* 3. PERBAIKI LEBAR TABEL: w-full sudah benar, tetapi container luar menentukan batas */}
+      <div className="overflow-x-auto"> {/* Tambahkan wrapper untuk scroll horizontal jika terlalu lebar */}
+        <table className="w-full text-left border-collapse">
+          <thead>
+            {/* BARIS HEADER: Tebal, Muted, dan dengan garis yang jelas */}
+            <tr 
+              style={{ 
+                color: 'var(--color-text-secondary)',
+                borderBottomColor: 'var(--color-border-subtle)',
+              }}
+            >
+              {columns.map((col) => (
+                <th 
+                  key={col.key} 
+                  className="py-3 px-2 font-semibold text-sm uppercase" 
+                >
+                  {col.header}
+                </th>
+              ))}
+            </tr>
+          </thead>
 
-        <tbody>
-          {/* Menangani Data Kosong */}
-          {data.length === 0 ? (
-             <tr>
-                <td colSpan={columns.length} className="py-4 text-center" style={{color: 'var(--color-text-secondary)'}}>
-                  Tidak ada data yang ditemukan.
-                </td>
-             </tr>
-          ) : (
-             // Memetakan baris data
-            data.map((row: any, rowIndex: number) => (
-              <tr 
-                key={rowIndex} 
-                className="border-b"
-                style={{ borderBottomColor: 'var(--color-border-subtle)' }}
-              >
-                {/* Memetakan sel data berdasarkan key kolom */}
-                {columns.map((col) => (
-                  <td key={`${rowIndex}-${col.key}`} className="py-2">
-                    {row[col.key]}
+          <tbody>
+            {data.length === 0 ? (
+                <tr>
+                  <td colSpan={columns.length} className="py-8 text-center" style={{color: 'var(--color-text-secondary)'}}>
+                    Tidak ada data yang ditemukan.
                   </td>
-                ))}
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+                </tr>
+            ) : (
+              data.map((row: any, rowIndex: number) => (
+                <tr 
+                  key={rowIndex} 
+                  className="border-b transition-all duration-200"
+                  style={{ borderBottomColor: 'var(--color-border-subtle)' }}
+                  // 4. KILLER EFFECT: subtle hover background dan neon border left
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                    e.currentTarget.style.borderLeft = `4px solid var(--color-accent)`;
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.borderLeft = '4px solid transparent';
+                  }}
+                >
+                  {columns.map((col) => (
+                    <td 
+                      key={`${rowIndex}-${col.key}`} 
+                      className="py-3 px-2 text-sm"
+                    >
+                      {row[col.key]}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
