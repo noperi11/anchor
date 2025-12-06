@@ -111,7 +111,6 @@ export default function Dashboard() {
     <Layout>
       <div className="p-2">
         <h1 className="text-3xl font-bold mb-4">Welcome, {user.email}</h1>
-        <h2 className="text-xl font-semibold mb-6">ANCHOR Dashboard</h2>
 
         {/* ---------------------------------------------------- */}
         {/* 1. TABEL RINGKASAN (Menggunakan state summaryMetrics) */}
@@ -122,7 +121,7 @@ export default function Dashboard() {
                 <div style={{ color: 'var(--color-text-secondary)' }}>Calculating summary metrics...</div>
             ) : (
                 <AnalyticsTable 
-                    title="Summary Statistics"
+                    title=""
                     columns={SUMMARY_COLUMNS}
                     data={summaryMetrics} // Data sudah dihitung oleh Backend
                 />
@@ -140,7 +139,7 @@ export default function Dashboard() {
                 <div style={{ color: 'var(--color-text-secondary)' }}>Loading session data...</div>
             ) : (
                 <AnalyticsTable 
-                    title="Detailed Session Records"
+                    title=""
                     columns={ENGAGEMENT_COLUMNS}
                     data={engagements} 
                 />
