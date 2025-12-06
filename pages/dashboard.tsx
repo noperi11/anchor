@@ -4,13 +4,13 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../utils/supabase";
 import { useRouter } from "next/router";
 
-// Import komponen yang sudah kita styling
-import Layout from "../components/Layout"; 
-import AnalyticsTable from "../components/AnalyticsTable"; 
+import Layout from "../components/Layout";
+import AnalyticsTable from "../components/AnalyticsTable";
 
 type Engagement = {
-  userId: string;
-  scoring: number;
+  // Menambahkan kolom yang ingin ditampilkan di tabel
+  sessionId: string; // <-- Kolom baru yang di-fetch
+  scoring: string;
   engagement: string;
   sessionContext: string;
 };
@@ -20,13 +20,12 @@ type User = {
   email: string;
 };
 
-// Data dummy untuk AnalyticsTable (sesuaikan dengan data sesungguhnya)
-const dummyAnalyticsData = [
-  { id: 1, metric_name: 'Total Products', metric_value: '45' },
-  { id: 2, metric_name: 'Avg. Engagement Score', metric_value: '7.8' },
-  { id: 3, metric_name: 'Total Users', metric_value: '2,100' },
+// 1. DEFINISI KOLOM UNTUK TABEL ENGAGEMENT MENTAH
+const ENGAGEMENT_COLUMNS = [
+  { key: 'sessionId', header: 'Session ID' },
+  { key: 'sessionContext', header: 'Context' },
+  { key: 'engagement', header: 'Engagement Type' },
 ];
-
 
 export default function Dashboard() {
   const router = useRouter();
@@ -46,9 +45,11 @@ export default function Dashboard() {
 
     async function fetchEngagement() {
       setLoading(true);
+
+      // 2. MENGUBAH QUERY SUPABASE UNTUK MENYEKAN sessionId
       const { data, error } = await supabase
         .from("Engagement")
-        .select("userId, Scoring, Engagement, sessionContext")
+        .select("sessionId, Scoring, Engagement, sessionContext") 
         .eq("userId", parsed.id);
 
       if (error) {
@@ -58,7 +59,7 @@ export default function Dashboard() {
       }
 
       const formattedData: Engagement[] = (data || []).map((e: any) => ({
-        userId: e.userId,
+        sessionId: e.sessionId || 'N/A', // Pastikan sessionId di mapping
         scoring: e.Scoring,
         engagement: e.Engagement,
         sessionContext: e.sessionContext,
@@ -72,11 +73,9 @@ export default function Dashboard() {
   }, [router]);
 
   if (!user)
-    // Loading State Awal
     return (
       <div 
         className="min-h-screen flex items-center justify-center"
-        // Memastikan warna latar belakang mengikuti tema
         style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)' }}
       >
         Loading...
@@ -84,29 +83,22 @@ export default function Dashboard() {
     );
 
   return (
-    // Membungkus seluruh konten dengan Layout. Layout akan mengatur padding dan warna global.
     <Layout>
-      {/* Container utama tanpa styling warna hardcoded */}
       <div className="p-2">
         <h1 className="text-3xl font-bold mb-4">Welcome, {user.email}</h1>
         <h2 className="text-xl font-semibold mb-6">Your Dashboard</h2>
 
-        {/* ---------------------------------------------------- */}
-        {/* 1. Tombol Navigasi (Menggunakan Aksen & Status Success) */}
-        {/* ---------------------------------------------------- */}
+        {/* Tombol Navigasi */}
         <div className="flex gap-4 mb-8">
           <a
             href="/products"
-            // Mengganti bg-blue-600 dengan warna Aksen
             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-text-primary)' }}
             className="py-2 px-4 rounded-xl hover:opacity-90 transition font-semibold"
           >
             Go to Products →
           </a>
-
           <a
             href="/products/create"
-            // Mengganti bg-green-600 dengan warna Status Success
             style={{ backgroundColor: 'var(--color-status-success)', color: 'var(--color-text-primary)' }}
             className="py-2 px-4 rounded-xl hover:opacity-90 transition font-semibold"
           >
@@ -115,28 +107,36 @@ export default function Dashboard() {
         </div>
 
         {/* ---------------------------------------------------- */}
-        {/* 2. Analytics Table (Menggunakan Komponen yang sudah di-styling) */}
+        {/* 3. TABEL ENGAGEMENT MENTAH */}
         {/* ---------------------------------------------------- */}
         <div className="mb-8">
-            <AnalyticsTable data={dummyAnalyticsData} />
+            {loading ? (
+                <div style={{ color: 'var(--color-text-secondary)' }}>Loading session data...</div>
+            ) : (
+                <AnalyticsTable 
+                    title="Raw Session Engagement Data"
+                    columns={ENGAGEMENT_COLUMNS}
+                    data={engagements} // <-- Menggunakan data nyata
+                />
+            )}
         </div>
-
+        
         {/* ---------------------------------------------------- */}
-        {/* 3. Engagement Cards / Data View */}
-        {/* ---------------------------------------------------- */}
-        <h2 className="text-xl font-semibold mb-4 mt-8">User Engagement Data</h2>
+        {/* 4. BAGIAN ENGAGEMENT CARDS ASLI (DIJADIKAN TABEL BARU JIKA PERLU) */}
+        {/* Kolom Scoring dan User ID (Optional) bisa ditampilkan di tabel baru di bawah ini */}
+        
+        <h2 className="text-xl font-semibold mb-4 mt-8">Other Engagement Metrics</h2>
 
         {loading ? (
           // Loading/Empty State: Mengganti text-gray-400
-          <div style={{ color: 'var(--color-text-secondary)' }}>Loading engagement data...</div>
+          <div style={{ color: 'var(--color-text-secondary)' }}>Loading additional data...</div>
         ) : engagements.length === 0 ? (
-          <div style={{ color: 'var(--color-text-secondary)' }}>No engagement data found.</div>
+          <div style={{ color: 'var(--color-text-secondary)' }}>No additional engagement data found.</div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {engagements.map((e, idx) => (
               <div
                 key={`${e.userId}-${idx}`}
-                // Mengganti bg-gray-900, text-gray-300, text-gray-400
                 style={{ backgroundColor: 'var(--color-bg-surface)' }} 
                 className="p-4 rounded-xl shadow hover:shadow-lg transition"
               >
@@ -145,12 +145,13 @@ export default function Dashboard() {
                     {e.engagement}
                 </p>
                 <p className="mt-2 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                  Context: {e.sessionContext}
+                  User ID: {e.userId}
                 </p>
               </div>
             ))}
           </div>
         )}
+        
       </div>
     </Layout>
   );
