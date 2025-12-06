@@ -75,7 +75,7 @@ export default function Login() {
           className="w-full max-w-md p-10 glass-effect rounded-2xl space-y-6"
         >
           
-          <TypingTitle text="LOGIN SYSTEM" />
+          <TypingTitle text="ANCHOR" />
           
           {/* INPUT FIELDS: Styling global diterapkan di globals.css */}
           <input
