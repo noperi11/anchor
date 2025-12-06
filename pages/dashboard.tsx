@@ -4,15 +4,16 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../utils/supabase";
 import { useRouter } from "next/router";
 
+// Import komponen yang sudah kita styling
 import Layout from "../components/Layout";
 import AnalyticsTable from "../components/AnalyticsTable";
 
 type Engagement = {
-  // Menambahkan kolom yang ingin ditampilkan di tabel
-  sessionId: string; // <-- Kolom baru yang di-fetch
-  scoring: string;
+  sessionId: string; // Tambahkan sessionId (asumsi ini kolom baru yang ingin Anda fetch)
+  scoring: number;
   engagement: string;
   sessionContext: string;
+  // userId: string; <-- Dihapus karena tidak ada di tabel Engagement
 };
 
 type User = {
@@ -23,8 +24,9 @@ type User = {
 // 1. DEFINISI KOLOM UNTUK TABEL ENGAGEMENT MENTAH
 const ENGAGEMENT_COLUMNS = [
   { key: 'sessionId', header: 'Session ID' },
+  { key: 'scoring', header: 'Score' },
+  { key: 'engagement', header: 'Type' },
   { key: 'sessionContext', header: 'Context' },
-  { key: 'engagement', header: 'Engagement Type' },
 ];
 
 export default function Dashboard() {
@@ -46,11 +48,12 @@ export default function Dashboard() {
     async function fetchEngagement() {
       setLoading(true);
 
-      // 2. MENGUBAH QUERY SUPABASE UNTUK MENYEKAN sessionId
+      // 2. MENGUBAH QUERY SUPABASE: Hapus 'userId' dari kolom yang di-select
       const { data, error } = await supabase
         .from("Engagement")
+        // Select kolom yang Anda miliki: sessionId, Scoring, Engagement, sessionContext
         .select("sessionId, Scoring, Engagement, sessionContext") 
-        .eq("userId", parsed.id);
+        .eq("userId", parsed.id); // <-- Masih menggunakan userId di WHERE clause untuk filtering
 
       if (error) {
         console.error("Error fetching engagement:", error);
@@ -59,7 +62,8 @@ export default function Dashboard() {
       }
 
       const formattedData: Engagement[] = (data || []).map((e: any) => ({
-        sessionId: e.sessionId || 'N/A', // Pastikan sessionId di mapping
+        sessionId: e.sessionId || 'N/A', // Mapping sessionId
+        // userId: e.userId, <-- Dihapus dari mapping
         scoring: e.Scoring,
         engagement: e.Engagement,
         sessionContext: e.sessionContext,
@@ -88,7 +92,7 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold mb-4">Welcome, {user.email}</h1>
         <h2 className="text-xl font-semibold mb-6">Your Dashboard</h2>
 
-        {/* Tombol Navigasi */}
+        {/* Tombol Navigasi (Styling Dark Mode) */}
         <div className="flex gap-4 mb-8">
           <a
             href="/products"
@@ -107,7 +111,7 @@ export default function Dashboard() {
         </div>
 
         {/* ---------------------------------------------------- */}
-        {/* 3. TABEL ENGAGEMENT MENTAH */}
+        {/* TABEL ENGAGEMENT MENTAH (MENGGANTIKAN DUMMY DATA) */}
         {/* ---------------------------------------------------- */}
         <div className="mb-8">
             {loading ? (
@@ -115,20 +119,18 @@ export default function Dashboard() {
             ) : (
                 <AnalyticsTable 
                     title="Raw Session Engagement Data"
-                    columns={ENGAGEMENT_COLUMNS}
-                    data={engagements} // <-- Menggunakan data nyata
+                    columns={ENGAGEMENT_COLUMNS} // Menggunakan definisi kolom baru
+                    data={engagements} // <-- Menggunakan data yang di-fetch
                 />
             )}
         </div>
         
         {/* ---------------------------------------------------- */}
-        {/* 4. BAGIAN ENGAGEMENT CARDS ASLI (DIJADIKAN TABEL BARU JIKA PERLU) */}
-        {/* Kolom Scoring dan User ID (Optional) bisa ditampilkan di tabel baru di bawah ini */}
-        
-        <h2 className="text-xl font-semibold mb-4 mt-8">Other Engagement Metrics</h2>
+        {/* BAGIAN ENGAGEMENT CARDS ASLI (Dipertahankan di bawah) */}
+        {/* ---------------------------------------------------- */}
+        <h2 className="text-xl font-semibold mb-4 mt-8">User Engagement Data (Cards)</h2>
 
         {loading ? (
-          // Loading/Empty State: Mengganti text-gray-400
           <div style={{ color: 'var(--color-text-secondary)' }}>Loading additional data...</div>
         ) : engagements.length === 0 ? (
           <div style={{ color: 'var(--color-text-secondary)' }}>No additional engagement data found.</div>
@@ -136,7 +138,7 @@ export default function Dashboard() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {engagements.map((e, idx) => (
               <div
-                key={`${e.userId}-${idx}`}
+                key={`${e.sessionId}-${idx}`} // Menggunakan sessionId untuk key
                 style={{ backgroundColor: 'var(--color-bg-surface)' }} 
                 className="p-4 rounded-xl shadow hover:shadow-lg transition"
               >
@@ -145,13 +147,12 @@ export default function Dashboard() {
                     {e.engagement}
                 </p>
                 <p className="mt-2 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                  User ID: {e.userId}
+                  Context: {e.sessionContext}
                 </p>
               </div>
             ))}
           </div>
         )}
-        
       </div>
     </Layout>
   );
