@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react"; // <--- PASTIKAN REACT DIIMPORT
+import React, { useEffect, useState } from "react";
 // Hapus import { createClient } dari sini, gunakan `supabase` hanya untuk action langsung (DELETE)
 import Layout from "@/components/Layout";
 import AnalyticsTable from "@/components/AnalyticsTable"; 
@@ -18,12 +18,12 @@ const supabase = createClient(
 );
 
 type Product = {
-  ProductId: string; // Sesuai nama di DB Anda
+  ProductId: string;
   BrandName: string; 
   ProductName: string;
   Category: string;
   ProductLink: string;
-  actions?: JSX.Element; // Untuk kolom tombol Delete di tabel
+  actions?: React.ReactNode; // <--- REVISI DI SINI
 };
 
 type User = {
