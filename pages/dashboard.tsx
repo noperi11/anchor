@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { supabase } from "../utils/supabase";
+// import { supabase } from "../utils/supabase"; <-- Hapus import Supabase
 import { useRouter } from "next/router";
 
 // Import komponen yang sudah kita styling
@@ -9,58 +9,18 @@ import Layout from "../components/Layout";
 import AnalyticsTable from "../components/AnalyticsTable";
 
 // -----------------------------------------------------------------
-// HELPER REGEX FUNCTIONS
+// TYPES & CONSTANTS (Dipertahankan)
 // -----------------------------------------------------------------
 
-// Fungsi 1: Mengekstrak 'key_facts_to_remember' (Diperbaiki)
-const extractMemoryMarker = (contextString: string) => {
-  // Pola baru: Menangkap semua teks (.*?) hingga bertemu spasi, koma, 'preferences_expressed=' atau akhir string.
-  const regex = /key_facts_to_remember=(.*?)(?:\s+preferences_expressed=|,|\s|$)/;
-  
-  const match = contextString.match(regex);
-  
-  // Pola yang lebih aman untuk koma/spasi:
-  const safeRegex = /key_facts_to_remember=([^,.\s]+.*?)(\s+preferences_expressed=|$)/;
-  
-  // Mari kita pakai pola yang paling mendekati keinginan Anda:
-  const finalRegex = /key_facts_to_remember=(.*?)(?:\s+preferences_expressed=|,|$)/;
-
-  const finalMatch = contextString.match(finalRegex);
-  
-  if (finalMatch && finalMatch[1]) {
-    // Karena koma (,) sekarang menjadi batas, kita harus pastikan hasil tangkapan dibersihkan.
-    return finalMatch[1].trim(); 
-  }
-  return 'Not found'; 
-};
-
-const extractMonitoringGuidance = (contextString: string) => {
-  // Pola yang lebih kuat: Mencari "monitoringGuidance": " dan menangkap semua karakter non-greedy (.*?)
-  // sampai kutipan ganda penutup ". Pola [\s\S]*? akan menangkap newline.
-  const regex = /"monitoringGuidance":\s*"([\s\S]*?)"/; 
-  
-  const match = contextString.match(regex);
-  
-  if (match && match[1]) {
-    // Mengganti semua newline (\n) dan backslash ganda (\\n) dengan spasi
-    return match[1].replace(/\\n/g, ' ').replace(/\n/g, ' ').trim(); 
-  }
-  return 'Not available';
-};
-
-
-// -----------------------------------------------------------------
-// TYPES & CONSTANTS
-// -----------------------------------------------------------------
-
+// Sesuaikan tipe data agar cocok dengan output API Route
 type Engagement = {
   sessionId: string;
-  scoring: number; // Tetap di-fetch, tapi tidak ditampilkan sebagai kolom utama
+  scoring: number;
   engagement: string;
   sessionContext: string;
   brand: string;
-  keyFact: string; // Hasil dari extractMemoryMarker
-  finalEvaluation: string; // Hasil dari extractMonitoringGuidance (Revisi Baru)
+  keyFact: string; // Hasil dari pemrosesan Backend
+  finalEvaluation: string; // Hasil dari pemrosesan Backend
 };
 
 type User = {
@@ -68,12 +28,11 @@ type User = {
   email: string;
 };
 
-// DEFINISI KOLOM UNTUK TABEL ENGAGEMENT MENTAH
+// DEFINISI KOLOM (Dipertahankan)
 const ENGAGEMENT_COLUMNS = [
   { key: 'sessionId', header: 'Session ID' },
   { key: 'brand', header: 'Brand' },
   { key: 'engagement', header: 'Type' },
-  // REVISI BARU: Mengganti Score dengan Final Evaluation
   { key: 'finalEvaluation', header: 'Final Evaluation' }, 
   { key: 'keyFact', header: 'Key Fact' }, 
 ];
@@ -99,54 +58,30 @@ export default function Dashboard() {
     const parsed: User = JSON.parse(stored);
     setUser(parsed);
 
-    async function fetchUserBrandAndEngagement() {
+    // FETCH DARI API ROUTE BARU
+    async function fetchEngagementFromAPI() {
       setLoading(true);
       const userId = parsed.id;
 
-      // 1. FETCH PROFILE: Ambil display_name (Brand Name)
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select("display_name")
-        .eq("id", userId)
-        .single();
-
-      if (profileError || !profileData) {
-        console.error("Error fetching profile or profile not found:", profileError);
-        setLoading(false);
-        return;
-      }
-      
-      const userBrandName = profileData.display_name;
-
-      // 2. FETCH ENGAGEMENT: Gunakan Brand Name untuk filter
-      const { data: engagementData, error: engagementError } = await supabase
-        .from("Engagement")
-        .select("sessionId, Brand, Scoring, Engagement, sessionContext") 
-        .eq("Brand", userBrandName); 
-
-      if (engagementError) {
-        console.error("Error fetching engagement:", engagementError);
-        setLoading(false);
-        return;
-      }
-
-      const formattedData: Engagement[] = (engagementData || []).map((e: any) => ({
-        sessionId: e.sessionId || 'N/A',
-        brand: e.Brand,
-        scoring: e.Scoring,
-        engagement: e.Engagement,
-        sessionContext: e.sessionContext, 
+      try {
+        // Panggil endpoint API Route yang baru dibuat
+        const response = await fetch(`/api/engagement-data?userId=${userId}`);
         
-        // MAPPING BARU: Ekstraksi Data Khusus
-        keyFact: extractMemoryMarker(e.sessionContext), 
-        finalEvaluation: extractMonitoringGuidance(e.sessionContext), // <-- Mapping Revisi Final
-      }));
+        if (!response.ok) {
+          throw new Error('Failed to fetch processed engagement data from API.');
+        }
 
-      setEngagements(formattedData);
-      setLoading(false);
+        const data: Engagement[] = await response.json();
+        setEngagements(data);
+
+      } catch (error) {
+        console.error("Error fetching data from API:", error);
+      } finally {
+        setLoading(false);
+      }
     }
 
-    fetchUserBrandAndEngagement();
+    fetchEngagementFromAPI();
   }, [router]);
 
   if (!user)
@@ -163,7 +98,6 @@ export default function Dashboard() {
     <Layout>
       <div className="p-2">
         <h1 className="text-3xl font-bold mb-4">Welcome, {user.email}</h1>
-        {/* REVISI 2: Ubah Judul */}
         <h2 className="text-xl font-semibold mb-6">ANCHOR Dashboard</h2>
 
         {/* TABEL ENGAGEMENT MENTAH */}
@@ -198,7 +132,6 @@ export default function Dashboard() {
                 <p className="mt-1" style={{ color: 'var(--color-text-secondary)' }}>
                     Score: {e.scoring}
                 </p>
-                {/* Tampilkan Final Evaluation di Cards juga */}
                 <p className="mt-2 text-sm" style={{ color: 'var(--color-text-muted)' }}>
                   Final Eval: {e.finalEvaluation}
                 </p>
