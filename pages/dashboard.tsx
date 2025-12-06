@@ -26,6 +26,20 @@ type SummaryMetric = {
     metric: string;
     value: string | number;
 };
+// Constants
+const SUMMARY_COLUMNS = [
+    { key: 'metric', header: 'Metric' },
+    { key: 'value', header: 'Value' },
+];
+
+// DEFINISI KOLOM UNTUK TABEL MENTAH (Dipastikan Ada)
+const ENGAGEMENT_COLUMNS = [
+    { key: 'sessionId', header: 'Session ID' },
+    { key: 'brand', header: 'Brand' },
+    { key: 'engagement', header: 'Type' },
+    { key: 'finalEvaluation', header: 'Final Evaluation' },    
+    { key: 'keyFact', header: 'Key Fact' },    
+];
 // -----------------------------------------------------------------
 // KOMPONEN DASHBOARD
 // -----------------------------------------------------------------
