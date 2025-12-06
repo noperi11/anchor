@@ -33,8 +33,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // 2. FETCH PRODUCTS: Filter tabel Products berdasarkan BrandName
     const { data: productsData, error: productsError } = await supabase
-      .from("Products")
-      .select("ProductId, BrandName, ProductName, Category, ProductLink") // Select semua kolom yang relevan
+      .from("products")
+      .select("BrandName, ProductName, Category, ProductLink") // Select semua kolom yang relevan
       .eq("BrandName", userBrandName); // Filter berdasarkan BrandName user yang login
 
     if (productsError) {
