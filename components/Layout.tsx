@@ -1,38 +1,50 @@
 // components/Layout.tsx
 import Link from "next/link";
 import { ReactNode } from "react";
+// 1. IMPORT FONT DARI NEXT/FONT/GOOGLE
+import { Electrolize } from 'next/font/google'
+
+// Definisikan Font Electrolize
+const electrolize = Electrolize({ 
+  subsets: ['latin'],
+  weight: '400', 
+  variable: '--font-electrolize', 
+})
+
 
 type Props = { children: ReactNode; showHeader?: boolean };
 
 export default function Layout({ children, showHeader = true }: Props) {
   return (
-    // Gunakan min-h-screen, biarkan warna diatur oleh body di globals.css
-    <div className="min-h-screen"> 
+    // 2. TERAPKAN FONT VARIABLE & FONT CLASS
+    <div className={`min-h-screen ${electrolize.className}`}>
       {showHeader && (
         <header 
-          // 1. POSITIONING & EFFECT KILLER UI (Sticky + Glassmorphism)
-          className="sticky top-0 z-50 p-4 border-b border-b-transparent transition-all duration-300 backdrop-blur-sm shadow-2xl" 
-          
-          // ** Menggunakan class custom CSS `.glass-effect` di globals.css **
-          // Kita akan mengganti styling inline Anda dengan class custom tersebut.
+          // 3. KILLER HEADER: Sticky & Shadow
+          className="sticky top-0 z-50 p-4 border-b border-b-transparent transition-all duration-300 shadow-2xl" 
         >
-          {/* Tambahkan class glass-effect di sini */}
-          <div className="glass-effect absolute inset-0 -z-10"></div>
+          {/* GLASSMORPHISM LAYER */}
+          <div 
+            className="glass-effect absolute inset-0 -z-10 border-b" 
+            style={{
+              // Border bottom pada layer kaca
+              borderBottomColor: 'var(--color-border-subtle)', 
+            }}
+          ></div>
           
-          <nav className="max-w-2xl mx-auto flex items-center justify-between relative z-10">
+          <nav className="max-w-5xl mx-auto flex items-center justify-between relative z-10">
             <div className="flex items-center gap-8">
-              {/* BRANDING/LOGO - Gunakan warna aksen Neon */}
+              {/* BRANDING/LOGO - Neon Accent */}
               <h1 
                 className="text-xl font-bold uppercase" 
                 style={{ color: 'var(--color-accent)' }}
               >
-                ANCHOR
+                Killer UI
               </h1>
               
               {/* Tautan Navigasi Utama: Menerapkan Neon Hover */}
               <Link 
                 href="/dashboard" 
-                // ** Menerapkan class custom NEON HOVER **
                 className="neon-text-hover text-sm font-medium" 
               >
                 Dashboard
@@ -45,15 +57,13 @@ export default function Layout({ children, showHeader = true }: Props) {
               </Link>
             </div>
 
-            {/* Tombol Logout: Tetap menggunakan warna Danger, namun dengan efek hover yang lebih tajam */}
+            {/* Tombol Logout: Neon Hover Danger */}
             <Link
               href="/login"
               onClick={() => {
                 if (typeof window !== "undefined") localStorage.removeItem("sb-token");
               }}
               style={{ color: 'var(--color-status-danger)' }}
-              // ** Menggunakan class Neon Hover untuk kesan 'pencahayaan' pada teks **
-              // Atau tetap hover opacity jika Anda ingin efek yang lebih lembut.
               className="neon-text-hover text-sm font-medium" 
             >
               Logout
@@ -62,7 +72,8 @@ export default function Layout({ children, showHeader = true }: Props) {
         </header>
       )}
 
-      {/* Konten Utama */}
+      {/* Konten utama kini full width untuk mendukung lebar tabel yang penuh (jika tidak dibatasi di main) */}
+      {/* Jika Anda ingin konten tetap di tengah, gunakan max-w-5xl di sini: */}
       <main className="max-w-5xl mx-auto p-6">{children}</main>
     </div>
   );
