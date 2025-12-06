@@ -2,13 +2,13 @@
 import Link from "next/link";
 import { ReactNode } from "react";
 // 1. IMPORT FONT DARI NEXT/FONT/GOOGLE
-import { Electrolize } from 'next/font/google'
+import { Orbit } from 'next/font/google'
 
-// Definisikan Font Electrolize
-const electrolize = Electrolize({ 
+// Definisikan Font orbit
+const orbit = Orbit({ 
   subsets: ['latin'],
   weight: '400', 
-  variable: '--font-electrolize', 
+  variable: '--font-orbit', 
 })
 
 
@@ -17,7 +17,7 @@ type Props = { children: ReactNode; showHeader?: boolean };
 export default function Layout({ children, showHeader = true }: Props) {
   return (
     // 2. TERAPKAN FONT VARIABLE & FONT CLASS
-    <div className={`min-h-screen ${electrolize.className}`}>
+    <div className={`min-h-screen ${orbit.className}`}>
       {showHeader && (
         <header 
           // 3. KILLER HEADER: Sticky & Shadow
