@@ -7,7 +7,25 @@ import Layout from "../components/Layout";
 import AnalyticsTable from "../components/AnalyticsTable";
 import CreditCard from "../components/CreditCard"; // Import CreditCard yang baru
 
+type Engagement = {
+    sessionId: string;
+    scoring: number;
+    engagement: string;
+    sessionContext: string;
+    brand: string;
+    keyFact: string;    
+    finalEvaluation: string;    
+};
 
+type User = {
+    id: string;
+    email: string;
+};
+
+type SummaryMetric = {
+    metric: string;
+    value: string | number;
+};
 // -----------------------------------------------------------------
 // KOMPONEN DASHBOARD
 // -----------------------------------------------------------------
