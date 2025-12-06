@@ -2,44 +2,61 @@
 import Link from "next/link";
 
 export default function ProductList({ products, onDelete }: any) {
+  
+  // ** Definisi Custom Class untuk Neon Card Hover **
+  // Ini akan memberikan efek glow pada card saat di-hover, berbeda dengan neon text.
+  const neonCardHover = `
+    transition-all duration-300 ease-in-out
+    shadow-lg 
+    hover:shadow-[0_0_10px_var(--color-accent-darker)]
+    hover:scale-[1.01]
+  `;
+  
   return (
     <div className="space-y-4">
       {products.map((p: any) => (
+        // 1. KILLER CARD: Gunakan .glass-effect dan Neon Hover
         <div
           key={p.id}
-          // Mengganti warna hardcoded dengan variabel CSS untuk Dark Mode
-          style={{
-            backgroundColor: 'var(--color-bg-surface)', 
-            borderColor: 'var(--color-border-subtle)',
-          }}
-          className="border p-5 rounded-xl flex items-center justify-between"
+          // Hapus style inline karena akan digantikan oleh .glass-effect
+          className={`
+            p-5 rounded-xl flex items-center justify-between 
+            glass-effect 
+            ${neonCardHover}
+            cursor-pointer
+          `}
         >
           <div>
-            <h3 className="text-lg font-semibold">{p.name}</h3>
-            {/* Mengganti text-grayText dengan variabel untuk teks sekunder/muted */}
+            {/* 2. Judul Produk: Tetap kuat dengan warna primary */}
+            <h3 className="text-xl font-bold">{p.name}</h3>
+            
+            {/* Teks Sekunder/Muted: Gunakan warna sekunder */}
             <p 
               style={{ color: 'var(--color-text-secondary)' }} 
-              className="text-sm"
+              className="text-sm font-light mt-1"
             >
               {p.category}
             </p>
-            <p className="text-sm mt-1">Rp {p.price}</p>
+            {/* Harga: Sedikit menonjol dengan font-semibold */}
+            <p className="text-base mt-2 font-semibold">Rp {p.price}</p>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Link Edit menggunakan warna Aksen */}
+          <div className="flex items-center gap-6">
+            {/* 3. Link Edit: Menerapkan Neon Text Hover */}
             <Link
               href={`/products/${p.id}/edit`}
               style={{ color: 'var(--color-accent)' }} 
-              className="hover:opacity-80 transition"
+              // ** Menggunakan class custom NEON HOVER **
+              className="neon-text-hover text-sm font-medium"
             >
               Edit
             </Link>
 
-            {/* Tombol Delete menggunakan warna Status Danger */}
+            {/* 4. Tombol Delete: Menerapkan Neon Text Hover (Warna Danger) */}
             <button
               style={{ color: 'var(--color-status-danger)' }}
-              className="hover:opacity-80 transition"
+              // ** Menggunakan class custom NEON HOVER **
+              className="neon-text-hover text-sm font-medium"
               onClick={() => onDelete(p.id)}
             >
               Delete
