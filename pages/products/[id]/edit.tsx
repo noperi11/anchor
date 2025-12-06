@@ -23,7 +23,7 @@ export default function EditProduct() {
   async function load() {
     if (!id) return;
     const { data, error } = await supabase
-      .from("Products")
+      .from("products")
       .select("*")
       .eq("ProductId", id)
       .single();
