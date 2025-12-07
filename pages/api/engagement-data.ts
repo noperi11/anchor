@@ -11,8 +11,8 @@ type Engagement = {
   engagement: string; 
   sessionContext: string;
   brand: string;
-  keyFact: string; 
-  finalEvaluation: string; 
+  keyFact: string;  // DITAMBAHKAN AGAR SESUAI DENGAN HASIL MAPPING DI BAWAH
+  // finalEvaluation DIHAPUS
 };
 
 type SummaryMetric = {
@@ -20,9 +20,7 @@ type SummaryMetric = {
     value: string | number;
 };
 
-// -----------------------------------------------------------------
-// HELPER REGEX FUNCTIONS (Dipertahankan di Backend)
-// -----------------------------------------------------------------
+// ... (Fungsi Helper Regex dan Summary tidak berubah)
 
 const extractMemoryMarker = (contextString: string) => {
   const finalRegex = /key_facts_to_remember=(.*?)(?:\s+preferences_expressed=|,|$)/;
@@ -41,10 +39,6 @@ const extractMonitoringGuidance = (contextString: string) => {
   }
   return 'Not available';
 };
-
-// -----------------------------------------------------------------
-// HELPER SUMMARY FUNCTION (DIPINDAHKAN KE BACKEND)
-// -----------------------------------------------------------------
 
 const calculateSummaryMetrics = (engagements: Engagement[]): SummaryMetric[] => {
   if (engagements.length === 0) {
@@ -109,6 +103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // 2. FETCH ENGAGEMENT
     const { data: engagementData, error: engagementError } = await supabase
       .from("Engagement")
+      // Tidak perlu lagi menyeleksi kolom finalEvaluation
       .select("sessionId, Brand, Scoring, Engagement, sessionContext") 
       .eq("Brand", userBrandName); 
 
@@ -118,6 +113,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // 3. PROCESSING (Regex & Mapping)
+    // Sekarang sudah cocok: hasil mapping memiliki struktur yang sama dengan Type Engagement yang baru.
     const processedData: Engagement[] = (engagementData || []).map((e: any) => ({
       sessionId: e.sessionId || 'N/A',
       brand: e.Brand,
