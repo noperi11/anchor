@@ -90,7 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { data: engagementData, error: engagementError } = await supabaseAdmin
             .from("Engagement")
             .select("*") 
-            .eq("BrandName", userBrandName); // Filter data berdasarkan BrandName user yang login
+            .eq("Brand", userBrandName); // Filter data berdasarkan BrandName user yang login
 
         if (engagementError) {
             console.error("Supabase Error:", engagementError);
