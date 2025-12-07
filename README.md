@@ -46,10 +46,12 @@ Project ini menggunakan **n8n** sebagai backend automation layer untuk menangani
 
 n8n digunakan sebagai backend untuk:
 
-- **Melakukan Override jika ada Oportunity yang tepat** melalui webhook
-- **Mengirim data engagement User aplikasi AI Chatbot ke Supabase**
-- **Memproses scoring, context, dan metadata lain** dalam setiap percakapan
-- **Mengelola integrasi eksternal** seperti API pihak ketiga, CRM, analytic tools, dan lain-lain
+- Override AI ketika ada sales opportunity
+- Menyimpan engagement user
+- Menghitung scoring rekomendasi
+- Membaca konteks percakapan
+- Menentukan waktu yang tepat untuk memberikan link
+- Integrasi third-party AP
 
 Dengan n8n, project ini memanfaatkan workflow backend yang lebih fleksibel, cepat dibuat, dan mudah dimaintain tanpa perlu memodifikasi kode di sisi frontend atau server.
 
@@ -121,10 +123,11 @@ Dengan n8n, project ini memanfaatkan workflow backend yang lebih fleksibel, cepa
 }
 
 ```
-### Pastikan Skema Database di SUPABASE Seperti ini
-<img width="883" height="617" alt="image" src="https://github.com/user-attachments/assets/3681d9d2-13fb-43af-bd6a-099a6316234b" />
 
 ## ✨ Instalasi
+### 🌐 Skema DB SUPABASE
+Pastikan Tables,Foreign Key dan Primary Key seperti berikut :
+<img width="883" height="617" alt="image" src="https://github.com/user-attachments/assets/3681d9d2-13fb-43af-bd6a-099a6316234b" />
 
 Langkah-langkah untuk menginstal atau meng-setup project secara lokal:
 
