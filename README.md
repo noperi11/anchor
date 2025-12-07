@@ -62,6 +62,7 @@ Pastikan Tables,Foreign Key dan Primary Key seperti berikut :
 <img width="883" height="617" alt="image" src="https://github.com/user-attachments/assets/3681d9d2-13fb-43af-bd6a-099a6316234b" />
 ### ♾ Skema n8n
 Skema n8n ini yang akan digunakan sebagai API webhook untuk analisa dan memberikan penilaian dari sesi pengguna AI Chatbot dan memberikan rekomendasi product dari Brand Partner apabila ada oportunity yang tepat dan ethical.
+
 **ANCHOR LAYER**
 <img width="1469" height="700" alt="image" src="https://github.com/user-attachments/assets/694166d6-0abf-44c9-96de-0bdd216a180a" />
 **ANCHOR ANALYZER**
