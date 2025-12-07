@@ -69,7 +69,7 @@ Skema n8n ini yang akan digunakan sebagai API webhook untuk analisa dan memberik
 <img width="1483" height="697" alt="image" src="https://github.com/user-attachments/assets/e4d2ef2b-a655-4161-a43b-833fea4ca3e8" />
 **RAG STATION**
 <img width="1470" height="700" alt="image" src="https://github.com/user-attachments/assets/e295ef8a-a3b7-4c0a-9677-394845523c10" />
-### 💎 Contoh Output Json dari n8n
+### 💎 Contoh Output Json dari n8n ke SUPABASE
 ```json
 {
   "sessionContext": {
