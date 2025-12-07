@@ -56,7 +56,7 @@ n8n digunakan sebagai backend untuk:
 
 Dengan n8n, project ini memanfaatkan workflow backend yang lebih fleksibel, cepat dibuat, dan mudah dimaintain tanpa perlu memodifikasi kode di sisi frontend atau server.
 
-## ✨ Instalasi
+## ✨ Skema ANCHOR & SUPABASE
 ### 🌐 Skema DB SUPABASE
 Pastikan Tables,Foreign Key dan Primary Key seperti berikut :
 <img width="883" height="617" alt="image" src="https://github.com/user-attachments/assets/3681d9d2-13fb-43af-bd6a-099a6316234b" />
@@ -69,7 +69,7 @@ Skema n8n ini yang akan digunakan sebagai API webhook untuk analisa dan memberik
 <img width="1483" height="697" alt="image" src="https://github.com/user-attachments/assets/e4d2ef2b-a655-4161-a43b-833fea4ca3e8" />
 **RAG STATION**
 <img width="1470" height="700" alt="image" src="https://github.com/user-attachments/assets/e295ef8a-a3b7-4c0a-9677-394845523c10" />
-### 💎 Output Json dari n8n
+### 💎 Contoh Output Json dari n8n
 ```json
 {
   "sessionContext": {
@@ -138,10 +138,8 @@ Skema n8n ini yang akan digunakan sebagai API webhook untuk analisa dan memberik
 
 ```
 
-
-
-### ♦️ Langkah-langkah untuk menginstal atau meng-setup project secara lokal:
-
+## 🔸 Instalasi Project
+### Install ANCHOR
 ```bash
 git clone https://github.com/noperi11/anchor.git
 cd anchor
@@ -163,3 +161,5 @@ Lalu Jalankan
 ```
 npm run dev
 ```
+### 🔹 Integrasi ANCHOR dengan Chatbot
+cukup hubungkan ke webhook n8n
