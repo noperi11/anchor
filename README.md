@@ -162,4 +162,8 @@ Lalu Jalankan
 npm run dev
 ```
 ### 🔹 Integrasi ANCHOR dengan Chatbot
-cukup hubungkan ke webhook n8n
+Untuk menjalankan Chatbot dan mengaktifkan koneksi ke n8n, Anda perlu mengatur Environment Variables pada proyek backend Chatbot Anda.
+.env.example
+```
+INTERNAL_WEBHOOK_URL = "URL_WEBHOOK_N8N KAMU"
+```
