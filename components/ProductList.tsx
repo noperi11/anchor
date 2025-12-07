@@ -1,9 +1,7 @@
-// components/ProductList.tsx
-import Link from "next/link";
-
 export default function ProductList({ products, onDelete }: any) {
   
   // ** Definisi Custom Class untuk Neon Card Hover **
+  // Class ini dipertahankan, tetapi efeknya hanya akan berlaku pada div card, bukan pada link/button.
   const neonCardHover = `
     transition-all duration-300 ease-in-out
     shadow-lg 
@@ -14,9 +12,7 @@ export default function ProductList({ products, onDelete }: any) {
   return (
     <div className="space-y-4">
       {products.map((p: any) => (
-        // ******************************************************
-        // SOLUSI: Pembungkus Tunggal (Parent Element) dengan Key
-        // ******************************************************
+        // Pembungkus Tunggal (Parent Element) dengan Key
         <div 
           key={p.id} // Key wajib untuk elemen hasil map
           className={`
@@ -27,7 +23,7 @@ export default function ProductList({ products, onDelete }: any) {
           `}
         >
           
-          {/* DIV 1: Detail Produk */}
+          {/* DIV 1: Detail Produk (Hanya menampilkan data) */}
           <div>
             {/* 1. Judul Produk: Tetap kuat dengan warna primary */}
             <h3 className="text-xl font-bold">{p.name}</h3>
@@ -43,28 +39,8 @@ export default function ProductList({ products, onDelete }: any) {
             <p className="text-base mt-2 font-semibold">Rp {p.price}</p>
           </div>
 
-          {/* DIV 2: Aksi (Edit/Delete) */}
-          <div className="flex items-center gap-6 mt-4">
-            {/* 3. Link Edit: Menerapkan Neon Text Hover */}
-            <Link
-              href={`/products/${p.id}/edit`}
-              style={{ color: 'var(--color-accent)' }} 
-              // ** Menggunakan class custom NEON HOVER **
-              className="neon-text-hover text-sm font-medium"
-            >
-              Edit
-            </Link>
-
-            {/* 4. Tombol Delete: Menerapkan Neon Text Hover (Warna Danger) */}
-            <button
-              style={{ color: 'var(--color-status-danger)' }}
-              // ** Menggunakan class custom NEON HOVER **
-              className="neon-text-hover text-sm font-medium"
-              onClick={() => onDelete(p.id)}
-            >
-              Delete
-            </button>
-          </div>
+          {/* DIV 2: Aksi (DIHAPUS!) */}
+          {/* Bagian <div className="flex items-center gap-6 mt-4">...</div> sudah dihapus */}
         </div>
       ))}
     </div>
