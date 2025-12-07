@@ -15,7 +15,7 @@ Sederhananya:
 
 AI berkembang sangat cepat — pengguna bertambah banyak, tetapi keinginan membayar turun drastis.
 
-- Masalah yang muncul di banyak aplikasi AI:
+Masalah yang muncul di banyak aplikasi AI:
 
 - Pengguna tidak ingin bayar subscription
 
