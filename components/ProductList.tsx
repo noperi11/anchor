@@ -15,19 +15,8 @@ export default function ProductList({ products, onDelete }: any) {
   return (
     <div className="space-y-4">
       {products.map((p: any) => (
-        // 1. KILLER CARD: Gunakan .glass-effect dan Neon Hover
-        <div
-          key={p.id}
-          // Hapus style inline karena akan digantikan oleh .glass-effect
-          className={`
-            p-5 rounded-xl flex items-center justify-between 
-            glass-effect 
-            ${neonCardHover}
-            cursor-pointer
-          `}
-        >
           <div>
-            {/* 2. Judul Produk: Tetap kuat dengan warna primary */}
+            {/* 1. Judul Produk: Tetap kuat dengan warna primary */}
             <h3 className="text-xl font-bold">{p.name}</h3>
             
             {/* Teks Sekunder/Muted: Gunakan warna sekunder */}
