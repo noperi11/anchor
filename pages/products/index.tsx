@@ -1,26 +1,20 @@
-// pages/products.tsx (Revisi Final: Delete via API Route)
-
 "use client";
 
 import React, { useEffect, useState } from "react";
 import Layout from "@/components/Layout";
 import AnalyticsTable from "@/components/AnalyticsTable";
-// Hapus import { createClient } dari @supabase/supabase-js
 import { useRouter } from "next/router";
 
 // -----------------------------------------------------------------
-// SUPABASE CLIENT & TYPES
+// TYPES
 // -----------------------------------------------------------------
 
-// Hapus: const supabase = createClient(...)
-
-// Tipe Product, User, dan PRODUCT_COLUMNS tetap sama
 type Product = {
     ProductId: string; // Diasumsikan string UUID
     BrandName: string;
     ProductName: string;
     Category: string;
-    ProductLink: string;
+    ProductLink: string; // Properti ini tetap di tipe data, tapi tidak ditampilkan
     actions?: React.ReactNode;
 };
 
@@ -29,13 +23,14 @@ type User = {
     email: string;
 };
 
+// ********** REVISI 1: Hapus definisi kolom 'ProductLink' **********
 const PRODUCT_COLUMNS = [
     { key: 'ProductId', header: 'ID' },
     { key: 'ProductName', header: 'Product Name' },
     { key: 'Category', header: 'Category' },
-    { key: 'ProductLink', header: 'Link' },
     { key: 'actions', header: 'Actions' },
 ];
+// ******************************************************************
 
 // -----------------------------------------------------------------
 // KOMPONEN UTAMA
@@ -47,7 +42,6 @@ export default function ProductsPage() {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<User | null>(null);
 
-    // ... (Fungsi loadProducts tetap sama, karena ia memanggil /api/products-data) ...
     async function loadProducts() {
         setLoading(true);
         const stored = localStorage.getItem("app_user");
@@ -78,7 +72,6 @@ export default function ProductsPage() {
         }
     }
 
-    // Fungsi Delete direvisi untuk memanggil API Route
     async function handleDelete(id: string) {
         if (!id || id === 'undefined') {
             alert("Gagal menghapus: Product ID tidak valid atau hilang.");
@@ -97,12 +90,10 @@ export default function ProductsPage() {
             });
 
             if (!response.ok) {
-                // Tangkap error dari backend (termasuk error UUID)
                 const errorData = await response.json();
                 console.error("API Delete Error:", errorData.error);
                 alert(`Error deleting product: ${errorData.error}`);
             } else {
-                // Jika berhasil (status 204), reload data
                 loadProducts();
             }
         } catch (e) {
@@ -115,7 +106,6 @@ export default function ProductsPage() {
         loadProducts();
     }, []);
 
-    // ... (formattedProductsData tetap sama) ...
     const formattedProductsData = products.map(product => ({
         ...product,
         actions: (
@@ -131,11 +121,11 @@ export default function ProductsPage() {
                 Delete
             </button>
         ),
-        ProductLink: (
-            <a href={product.ProductLink} target="_blank" rel="noopener noreferrer" className="neon-text-hover" style={{ color: 'var(--color-accent)' }}>
-                View Link
-            </a>
-        )
+        // ********** REVISI 2: Hapus ProductLink dari mapping **********
+        // Kolom ini sekarang akan mengambil nilai default dari spread operator (...product)
+        // yang hanya berupa string ProductLink, namun karena tidak ada di PRODUCT_COLUMNS,
+        // kolom ini tidak akan dirender di AnalyticsTable.
+        // ***************************************************************
     }));
 
 
@@ -175,7 +165,7 @@ export default function ProductsPage() {
                 ) : (
                     <AnalyticsTable
                         title="Registered Products"
-                        columns={PRODUCT_COLUMNS}
+                        columns={PRODUCT_COLUMNS} // Sekarang hanya 4 kolom
                         data={formattedProductsData}
                     />
                 )}
