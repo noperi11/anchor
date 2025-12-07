@@ -9,8 +9,8 @@ Caranya: dengan memberikan rekomendasi produk yang kontekstual, muncul hanya ket
 Sederhananya:
 ➡️ AI berbicara seperti biasa, dan ketika ada momen yang tepat, ANCHOR menawarkan rekomendasi yang benar-benar membantu.
 ### ANCHOR Demo
-- Demo Sebagai User AI Chatbot ->
-- Demo Sebagai Brand Pengiklan ->
+- Demo Sebagai User AI Chatbot -> https://infinite-ai-nine.vercel.app/ ( Repo Github : https://github.com/noperi11/infinite-ai)
+- Demo Sebagai Brand Pengiklan -> https://anchor-ochre.vercel.app/
 ## 💡 Kenapa ANCHOR Dibuat?
 
 AI berkembang sangat cepat — pengguna bertambah banyak, tetapi keinginan membayar turun drastis.
