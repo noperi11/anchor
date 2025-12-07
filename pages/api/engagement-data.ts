@@ -33,14 +33,13 @@ const extractMemoryMarker = (contextString: string) => {
   return 'Not found'; 
 };
 
-const extractReasoning = (contextString) => {
-    // Regex mencari kunci "reasoning", diikuti oleh tanda titik dua (:), 
-    // dan menangkap (capture group) string nilai di antara tanda kutip ganda ("...").
+const extractReasoning = (contextString: string) => { 
     const regex = /"reasoning"[\s\S]*?:[\s\S]*?"([\s\S]*?)"/; 
     
     const match = contextString.match(regex);
     
     if (match && match[1]) {
+        // Membersihkan string hasil tangkapan:
         return match[1].replace(/\\n/g, ' ').replace(/\n/g, ' ').trim(); 
     }
     
