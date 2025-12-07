@@ -34,7 +34,8 @@ const extractMemoryMarker = (contextString: string) => {
 };
 
 const extractReasoning = (contextString: string) => { 
-    const regex = /"reasoning"[\s\S]*?:[\s\S]*?"([\s\S]*?)"/; 
+    // Regex mencari kunci "reasoning"...
+    const regex = /"reasoning"[\s\S]*?:[\s\S]*?"([\s\S]*?)"/;
     
     const match = contextString.match(regex);
     
@@ -121,6 +122,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error("Supabase Error:", engagementError);
       return res.status(500).json({ error: 'Error fetching engagement data.' });
     }
+    const mappedData = data.map((e) => ({
+      ...e,
+      sessionContext: e.sessionContext, 
+      keyFact: extractMemoryMarker(e.sessionContext), 
+      finalEvaluation: extractReasoning(e.sessionContext), // <-- FIX: Gunakan extractReasoning
+    }));
 
     // 3. PROCESSING (Regex & Mapping)
     const processedData: Engagement[] = (engagementData || []).map((e: any) => ({
