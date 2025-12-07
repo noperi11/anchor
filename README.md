@@ -9,7 +9,8 @@ Caranya: dengan memberikan rekomendasi produk yang kontekstual, muncul hanya ket
 Sederhananya:
 ➡️ AI berbicara seperti biasa, dan ketika ada momen yang tepat, ANCHOR menawarkan rekomendasi yang benar-benar membantu.
 ### ANCHOR Demo
-- Video Demo -> https://drive.google.com/file/d/1wXzCrAF8AsxqOeRG0jD3DMbzIPyFLDea/view?usp=drive_link 
+- 1 Min Demo: https://drive.google.com/file/d/1D2jVTARFVUZke3ognpgm2PxGfbyLvoH7/view?usp=drive_link
+- Drive Anchor: https://drive.google.com/drive/folders/16XzlFj1H-x3J3dVzXG7N9OoNAamxsuNz?usp=drive_link 
 - Demo Sebagai User AI Chatbot -> https://infinite-ai-nine.vercel.app/ ( Repo Github : https://github.com/noperi11/infinite-ai)
 - Demo Sebagai Brand Pengiklan -> https://anchor-ochre.vercel.app/ ( Untuk Login Gunakan id : adidas@gmail.com, pass : adidas )
 ## 💡 Kenapa ANCHOR Dibuat?
