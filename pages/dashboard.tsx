@@ -13,8 +13,7 @@ type Engagement = {
     engagement: string;
     sessionContext: string;
     brand: string;
-    keyFact: string;    
-    finalEvaluation: string;    
+    keyFact: string;      
 };
 
 type User = {
@@ -36,8 +35,7 @@ const SUMMARY_COLUMNS = [
 const ENGAGEMENT_COLUMNS = [
     { key: 'sessionId', header: 'Session ID' },
     { key: 'brand', header: 'Brand' },
-    { key: 'engagement', header: 'Type' },
-    { key: 'finalEvaluation', header: 'Final Evaluation' },    
+    { key: 'engagement', header: 'Type' },    
     { key: 'keyFact', header: 'Key Fact' },    
 ];
 // -----------------------------------------------------------------
