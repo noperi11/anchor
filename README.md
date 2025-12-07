@@ -9,8 +9,9 @@ Caranya: dengan memberikan rekomendasi produk yang kontekstual, muncul hanya ket
 Sederhananya:
 ➡️ AI berbicara seperti biasa, dan ketika ada momen yang tepat, ANCHOR menawarkan rekomendasi yang benar-benar membantu.
 ### ANCHOR Demo
+- Video Demo -> https://drive.google.com/file/d/1wXzCrAF8AsxqOeRG0jD3DMbzIPyFLDea/view?usp=drive_link 
 - Demo Sebagai User AI Chatbot -> https://infinite-ai-nine.vercel.app/ ( Repo Github : https://github.com/noperi11/infinite-ai)
-- Demo Sebagai Brand Pengiklan -> https://anchor-ochre.vercel.app/
+- Demo Sebagai Brand Pengiklan -> https://anchor-ochre.vercel.app/ ( Untuk Login Gunakan id : adidas@gmail.com, pass : adidas )
 ## 💡 Kenapa ANCHOR Dibuat?
 
 AI berkembang sangat cepat — pengguna bertambah banyak, tetapi keinginan membayar turun drastis.
@@ -35,7 +36,7 @@ Monetisasi tanpa mengorbankan kenyamanan dan kepercayaan pengguna.
 - Tailwind
 - Database SUPABASE 
 - n8n AI Agents
-
+- RAG
 ## 🔄 Integrasi Backend dengan n8n
 
 Project ini menggunakan **n8n** sebagai backend automation layer untuk menangani proses-proses server-side seperti penyimpanan engagement, trigger event, pemrosesan data, serta integrasi dengan SUPABASE.
@@ -128,8 +129,15 @@ Dengan n8n, project ini memanfaatkan workflow backend yang lebih fleksibel, cepa
 ### 🌐 Skema DB SUPABASE
 Pastikan Tables,Foreign Key dan Primary Key seperti berikut :
 <img width="883" height="617" alt="image" src="https://github.com/user-attachments/assets/3681d9d2-13fb-43af-bd6a-099a6316234b" />
+### ♾ Skema n8n
+**ANCHOR LAYER**
+<img width="1469" height="700" alt="image" src="https://github.com/user-attachments/assets/694166d6-0abf-44c9-96de-0bdd216a180a" />
+**ANCHOR ANALYZER**
+<img width="1483" height="697" alt="image" src="https://github.com/user-attachments/assets/e4d2ef2b-a655-4161-a43b-833fea4ca3e8" />
+**RAG STATION**
+<img width="1470" height="700" alt="image" src="https://github.com/user-attachments/assets/e295ef8a-a3b7-4c0a-9677-394845523c10" />
 
-Langkah-langkah untuk menginstal atau meng-setup project secara lokal:
+### ♦️ Langkah-langkah untuk menginstal atau meng-setup project secara lokal:
 
 ```bash
 git clone https://github.com/noperi11/anchor.git
