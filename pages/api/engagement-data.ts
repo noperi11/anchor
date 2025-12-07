@@ -125,7 +125,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       engagement: e.Engagement,
       sessionContext: e.sessionContext, 
       keyFact: extractMemoryMarker(e.sessionContext), 
-      finalEvaluation: extractMonitoringGuidance(e.sessionContext),
     }));
 
     // 4. SUMMARY CALCULATION (Di Server)
