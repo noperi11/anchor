@@ -52,11 +52,23 @@ n8n digunakan sebagai backend untuk:
 - Menghitung scoring rekomendasi
 - Membaca konteks percakapan
 - Menentukan waktu yang tepat untuk memberikan link
-- Integrasi third-party AP
+- Integrasi third-party API
 
 Dengan n8n, project ini memanfaatkan workflow backend yang lebih fleksibel, cepat dibuat, dan mudah dimaintain tanpa perlu memodifikasi kode di sisi frontend atau server.
 
-## 💎 Output Json dari n8n
+## ✨ Instalasi
+### 🌐 Skema DB SUPABASE
+Pastikan Tables,Foreign Key dan Primary Key seperti berikut :
+<img width="883" height="617" alt="image" src="https://github.com/user-attachments/assets/3681d9d2-13fb-43af-bd6a-099a6316234b" />
+### ♾ Skema n8n
+Skema n8n ini yang akan digunakan sebagai API webhook untuk analisa dan memberikan penilaian dari sesi pengguna AI Chatbot dan memberikan rekomendasi product dari Brand Partner apabila ada oportunity yang tepat dan ethical.
+**ANCHOR LAYER**
+<img width="1469" height="700" alt="image" src="https://github.com/user-attachments/assets/694166d6-0abf-44c9-96de-0bdd216a180a" />
+**ANCHOR ANALYZER**
+<img width="1483" height="697" alt="image" src="https://github.com/user-attachments/assets/e4d2ef2b-a655-4161-a43b-833fea4ca3e8" />
+**RAG STATION**
+<img width="1470" height="700" alt="image" src="https://github.com/user-attachments/assets/e295ef8a-a3b7-4c0a-9677-394845523c10" />
+### 💎 Output Json dari n8n
 ```json
 {
   "sessionContext": {
@@ -125,17 +137,7 @@ Dengan n8n, project ini memanfaatkan workflow backend yang lebih fleksibel, cepa
 
 ```
 
-## ✨ Instalasi
-### 🌐 Skema DB SUPABASE
-Pastikan Tables,Foreign Key dan Primary Key seperti berikut :
-<img width="883" height="617" alt="image" src="https://github.com/user-attachments/assets/3681d9d2-13fb-43af-bd6a-099a6316234b" />
-### ♾ Skema n8n
-**ANCHOR LAYER**
-<img width="1469" height="700" alt="image" src="https://github.com/user-attachments/assets/694166d6-0abf-44c9-96de-0bdd216a180a" />
-**ANCHOR ANALYZER**
-<img width="1483" height="697" alt="image" src="https://github.com/user-attachments/assets/e4d2ef2b-a655-4161-a43b-833fea4ca3e8" />
-**RAG STATION**
-<img width="1470" height="700" alt="image" src="https://github.com/user-attachments/assets/e295ef8a-a3b7-4c0a-9677-394845523c10" />
+
 
 ### ♦️ Langkah-langkah untuk menginstal atau meng-setup project secara lokal:
 
