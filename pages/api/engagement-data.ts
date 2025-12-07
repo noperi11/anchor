@@ -88,7 +88,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // 2. FETCH ENGAGEMENT DATA: Filter tabel berdasarkan BrandName
         const { data: engagementData, error: engagementError } = await supabaseAdmin
-            .from("Engagements")
+            .from("Engagement")
             .select("*") 
             .eq("BrandName", userBrandName); // Filter data berdasarkan BrandName user yang login
 
